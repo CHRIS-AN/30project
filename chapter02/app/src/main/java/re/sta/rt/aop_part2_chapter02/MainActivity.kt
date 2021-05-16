@@ -56,6 +56,20 @@ class MainActivity : AppCompatActivity() {
 
         initRunButton()
         initAddButton()
+        initClearButton()
+    }
+
+    private fun initClearButton() {
+        clearButton.setOnClickListener {
+
+            pickNumberSet.clear()
+            numberTextViewList.forEach {
+                it.isVisible = false
+            }
+
+            // 다시 번호가 추가가 될 것이다.
+            didRun = false
+        }
     }
 
     private fun initAddButton() {
@@ -92,6 +106,7 @@ class MainActivity : AppCompatActivity() {
         runButton.setOnClickListener {
             val list = getRandomNumber()
 
+            didRun = true
             //Log.d("main", list.toString())
         }
     }
