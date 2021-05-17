@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 
 class MainActivity : AppCompatActivity() {
@@ -98,6 +99,16 @@ class MainActivity : AppCompatActivity() {
             textView.isVisible = true // textView가 보이지 않기 때문에 true로 준 다음에 textView가 보이도록 설정해줘야함.
             textView.text = numberPicker.value.toString() // 해당값을 toString으로 변경하여 값을 넣어준다
 
+
+            // 숫자에 맞는 색이 나오게끔
+            when(numberPicker.value) {
+                in 1..6 -> textView.background = ContextCompat.getDrawable(this, R.drawable.circle_gray)
+                in 7..12 -> textView.background = ContextCompat.getDrawable(this, R.drawable.circle_purple)
+                in 13..18 -> textView.background = ContextCompat.getDrawable(this, R.drawable.circle_yellow)
+                in 19..24 -> textView.background = ContextCompat.getDrawable(this, R.drawable.circle_red)
+                in 25..32 -> textView.background = ContextCompat.getDrawable(this, R.drawable.circle_green)
+                else -> textView.background = ContextCompat.getDrawable(this, R.drawable.circle_blue)
+            }
             pickNumberSet.add(numberPicker.value)
         }
     }
