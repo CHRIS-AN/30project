@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
 
-    <!-- 더 the secret garden TextView -->
+    <!-- the secret garden TextView -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
