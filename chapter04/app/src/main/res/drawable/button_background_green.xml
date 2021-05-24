@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple
+    xmlns:andorid="http://schemas.android.com/apk/res/android"
+    andorid:color="@color/greenPress">
+
+    <item andorid:id="@+id/background">
+        <shape andorid:shape="rectangle">
+            <solid andorid:color="@color/green"/>
+            <corners andorid:radius="100dp"/>
+            <stroke andorid:width="1dp"
+                andorid:color="@color/greenPress"/>
+        </shape>
+    </item>
+
+
+
+</ripple>
