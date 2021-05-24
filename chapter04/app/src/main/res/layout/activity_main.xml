@@ -12,23 +12,86 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/keypadTableLayout"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_weight="1"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_weight="1" />
 
     <TableLayout
         android:id="@+id/keypadTableLayout"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/topLayout"
-        app:layout_constraintVertical_weight="1.5"
         android:layout_width="0dp"
-        android:layout_height="0dp">
+        android:layout_height="0dp"
+        android:shrinkColumns="*"
+        android:paddingTop="21dp"
+        android:paddingBottom="21dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topLayout"
+        app:layout_constraintVertical_weight="1.5">
+
+
+        <!-- 계산기 버튼 키  -->
+        <TableRow android:layout_weight="1">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="7dp"
+                android:background="@drawable/button_background"
+                android:stateListAnimator="@null"
+                android:onClick="buttonClicked"
+                android:text="C"
+                android:textSize="24sp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="7dp"
+                android:background="@drawable/button_background"
+                android:stateListAnimator="@null"
+                android:onClick="buttonClicked"
+                android:text="C"
+                android:textSize="24sp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="7dp"
+                android:background="@drawable/button_background"
+                android:stateListAnimator="@null"
+                android:onClick="buttonClicked"
+                android:text="C"
+                android:textSize="24sp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="7dp"
+                android:background="@drawable/button_background"
+                android:stateListAnimator="@null"
+                android:onClick="buttonClicked"
+                android:text="C"
+                android:textSize="24sp" />
+        </TableRow>
+
+        <TableRow android:layout_weight="1"></TableRow>
+
+        <TableRow android:layout_weight="1"></TableRow>
+
+        <TableRow android:layout_weight="1">
+
+        </TableRow>
+
+        <TableRow android:layout_weight="1">
+
+        </TableRow>
+
 
     </TableLayout>
 
 
-
 </androidx.constraintlayout.widget.ConstraintLayout>
+
