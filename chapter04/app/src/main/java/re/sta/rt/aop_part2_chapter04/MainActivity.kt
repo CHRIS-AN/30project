@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.room.Room
 import java.lang.NumberFormatException
 
 class MainActivity : AppCompatActivity() {
@@ -30,12 +31,23 @@ class MainActivity : AppCompatActivity() {
         findViewById<View>(R.id.historyLinearLayout)
     }
 
+    lateinit var db : AppDatabase
+
+
     private var isOperator =  false
     private var hasOperator = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // oncreate 할 때, 앱 데이터베이스가 실제로 만들어져서 들어가게끔
+        // 값을 할당하기
+        db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java,
+            "histroyDB"
+        ).build()
     }
 
 
