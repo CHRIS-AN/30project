@@ -2,9 +2,26 @@ package re.sta.rt.aop_part2_chapter04
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.view.View
+import android.widget.TextView
+import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
+
+    private val expressionTextView : TextView by lazy {
+        findViewById<TextView>(R.id.expressionTextView)
+    }
+
+    private val resultTextView : TextView by lazy {
+        findViewById<TextView>(R.id.resultTextView)
+    }
+
+    private var isOperator =  false
+    private var hasOperator = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -34,14 +51,61 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 연산자 버튼 클릭 시,
-    private fun operatorButtonClicked(operator : String) {
-
-    }
-
-    // button 들이 눌렸을 때?
+    // button 들이 눌렸을 때? (숫자는 15자리까지만)
     private fun numberButtonClicked(number: String) {
 
+        if(isOperator) {
+            //연산자를 사용하다 왔니?
+            expressionTextView.append(" ")
+        }
+        isOperator = false
+
+        val expressionText =  expressionTextView.text.split(" ")
+        if (expressionText.isNotEmpty() && expressionText.last().length > 15) {
+            Toast.makeText(this, "15 자리까지만 사용할 수 있습니다.", Toast.LENGTH_SHORT).show()
+            return
+        }else if (expressionText.last().isEmpty() && number == "0") {
+            Toast.makeText(this, "0은 제일 앞에 올 수 없습니다.", Toast.LENGTH_SHORT).show()
+        }
+        expressionTextView.append(number)
+        // TODO resultTextView 실시간으로 계산 결과를 넣어야하는 기능
+    }
+
+    // 연산자 버튼 클릭 시, (연산자가 눌렸을 시, 한 가지 연산자만 사용되게끔)
+    private fun operatorButtonClicked(operator : String) {
+        //연산자가 먼저 들어오면 안된다.
+        if (expressionTextView.text.isEmpty()) {
+            return
+        }
+        // 이미 연산자를 썼는데 또 쓰는 경우
+        // 이미 연산자를 썼는데, 수정을 하기 위해서,
+        when {
+            isOperator -> {
+                val text = expressionTextView.text.toString()
+                expressionTextView.text = text.dropLast(1) + operator
+            }
+
+            hasOperator -> {
+                Toast.makeText(this, "연산자는 한 번만 사용할 수 있습니다.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            // 숫자만 입력하고, 연산자가 한 번도 들어오지 않은 경우. (위의 두가지 경우가 false 일 때,)
+            else -> {
+                expressionTextView.append(" $operator")
+            }
+        }
+        // 글자를 초록색으로 
+        val ssb = SpannableStringBuilder(expressionTextView.text)
+        ssb.setSpan(
+            ForegroundColorSpan(getColor(R.color.green)),
+            expressionTextView.text.length -1,
+            expressionTextView.text.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        expressionTextView.text = ssb
+
+        isOperator = true
+        hasOperator = true
     }
 
     fun resultButtonClicked (v : View) {
