@@ -6,11 +6,14 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.room.Room
+import re.sta.rt.aop_part2_chapter04.model.History
 import java.lang.NumberFormatException
 
 class MainActivity : AppCompatActivity() {
@@ -27,8 +30,8 @@ class MainActivity : AppCompatActivity() {
         findViewById<View>(R.id.historyLayout)
     }
 
-    private val historyLinearLayout : View by lazy {
-        findViewById<View>(R.id.historyLinearLayout)
+    private val historyLinearLayout :LinearLayout by lazy {
+        findViewById<LinearLayout>(R.id.historyLinearLayout)
     }
 
     lateinit var db : AppDatabase
@@ -46,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,
-            "histroyDB"
+            "historyDB"
         ).build()
     }
 
@@ -157,6 +160,13 @@ class MainActivity : AppCompatActivity() {
         resultTextView.text = ""
         expressionTextView.text = resultText
 
+
+        //  디비에 넣어주는 부분
+        Thread(Runnable {
+            db.historyDao().insertHistory(History(null, expressionText, resultText ))
+        }).start()
+
+
         // 연산이 한 번 끝났기 때문에, 다시 초기화
         isOperator = false
         hasOperator = false
@@ -190,9 +200,24 @@ class MainActivity : AppCompatActivity() {
     fun historyButtonClicked (v : View) {
         historyLayout.isVisible = true
 
-        // TODO 디비에서 모든 기록 가져오기
-        // TODO 뷰에 모든 기록 할당하기
+        //  TODO 디비에서 모든 기록 ( 최신 것은 위로 보이게끔 만들기 reversed)
+        //  TODO 뷰에 모든 기록 할당하기
+        // linearlayout 하위에 있는 모든 view들이 삭제가 된다.
+        historyLinearLayout.removeAllViews()
 
+        Thread(Runnable {
+            db.historyDao().getAll().reversed().forEach {
+                // 메인스레드가이니니, ui쓰레드
+                runOnUiThread {
+                    val historyView = LayoutInflater
+                        .from(this)
+                        .inflate(R.layout.history_row, null, false)
+                    historyView.findViewById<TextView>(R.id.expressionTextView).text = it.expression
+                    historyView.findViewById<TextView>(R.id.resultTextView).text = "= ${it.result}"
+                    historyLinearLayout.addView(historyView)
+                }
+            }
+        }).start()
     }
 
     fun closeHistoryButtonClicked (v :View) {
@@ -200,8 +225,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun historyClearButtonClicked (v :View) {
-        // TODO 디비에서 모든 기록삭제
+
         // TODO 뷰에서 모든 기록삭제
+        historyLinearLayout.removeAllViews()
+
+
+        // TODO 디비에서 모든 기록삭제
+        Thread(Runnable {
+            db.historyDao().deleteAll()
+        }).start()
+
     }
 
 
