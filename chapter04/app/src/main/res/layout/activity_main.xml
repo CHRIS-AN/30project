@@ -316,10 +316,7 @@
                 android:textColor="@color/white"
                 android:textSize="24sp" />/
         </TableRow>
-
-
     </TableLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -112,8 +112,35 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun resultButtonClicked (v : View) {
+        val expressionTexts = expressionTextView.text.split(" ")
 
+        if(expressionTextView.text.isEmpty() || expressionTexts.size == 1) {
+            // 연산할 게 없으니, 아무것도 주지 않는다. (예외처리?)
+            return
+        }
+
+        if (expressionTexts.size != 3 && hasOperator) {
+            // 숫자와 연산자까지만 입력이 된 상태 (완성되지 않은 수식)
+            Toast.makeText(this, "아직 완성되지 않은 수식입니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (expressionTexts[0].isNumber().not() || expressionTexts[2].isNumber().not()) {
+            Toast.makeText(this, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val expressionText = expressionTextView.text.toString()
+        val resultText = calculateExpression()
+
+        resultTextView.text = ""
+        expressionTextView.text = resultText
+
+        // 연산이 한 번 끝났기 때문에, 다시 초기화
+        isOperator = false
+        hasOperator = false
     }
+
 
     private fun calculateExpression() : String {
         // expression 뷰 에서 연산자 숫자를 가져와서 resultTextView에 값을 넣기 위한 반환 함수.
@@ -144,7 +171,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun clearButtonClicked (v : View) {
-
+        expressionTextView.text = ""
+        resultTextView.text = ""
+        isOperator = false
+        hasOperator = false
     }
 
 
