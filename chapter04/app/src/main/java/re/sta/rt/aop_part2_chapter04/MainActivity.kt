@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import java.lang.NumberFormatException
 
 class MainActivity : AppCompatActivity() {
 
@@ -69,6 +71,7 @@ class MainActivity : AppCompatActivity() {
         }
         expressionTextView.append(number)
         // TODO resultTextView 실시간으로 계산 결과를 넣어야하는 기능
+        resultTextView.text = calculateExpression()
     }
 
     // 연산자 버튼 클릭 시, (연산자가 눌렸을 시, 한 가지 연산자만 사용되게끔)
@@ -95,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                 expressionTextView.append(" $operator")
             }
         }
-        // 글자를 초록색으로 
+        // 글자를 초록색으로
         val ssb = SpannableStringBuilder(expressionTextView.text)
         ssb.setSpan(
             ForegroundColorSpan(getColor(R.color.green)),
@@ -112,6 +115,30 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun calculateExpression() : String {
+        // expression 뷰 에서 연산자 숫자를 가져와서 resultTextView에 값을 넣기 위한 반환 함수.
+        val expressionTexts = expressionTextView.text.split(" ")
+
+        if(hasOperator.not() || expressionTexts.size != 3) {
+            // 예외가 발생하니, 빈 string 값을 넣는다.
+            return ""
+        }else if (expressionTexts[0].isNumber().not() || expressionTexts[2].isNumber().not())
+            return ""
+
+        val exp1 = expressionTexts[0].toBigInteger()
+        val exp2 = expressionTexts[2].toBigInteger()
+        val op = expressionTexts[1]
+
+        return when(op) {
+            "+" -> (exp1 + exp2).toString()
+            "-" -> (exp1 - exp2).toString()
+            "x" -> (exp1 * exp2).toString()
+            "/" -> (exp1 / exp2).toString()
+            "%" -> (exp1 % exp2).toString()
+            else -> ""
+        }
+    }
+
     fun historyButtonClicked (v : View) {
 
     }
@@ -122,3 +149,20 @@ class MainActivity : AppCompatActivity() {
 
 
 }
+
+// 확장 함수 만들기.
+fun String.isNumber(): Boolean {
+    return try {
+        // BigInteger는 무한의 수를 저장할 수 있다
+        this.toBigInteger()
+        true
+    } catch (e: NumberFormatException) {
+        false
+    }
+}
+
+
+
+
+
+
