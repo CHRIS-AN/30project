@@ -69,6 +69,33 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    private fun initStartPhotoFrameModeButton() {
+        startPhotoFrameModeButton.setOnClickListener {
+            val intent = Intent(this, PhotoFrameActivity::class.java)
+
+            // uri를 넘기기 위해, uri 자체를 넘길 수 없으니, string으로 바꿔서 넘겨준다.
+            imageUriList.forEachIndexed { index, uri ->
+                // 하나하나씩 꺼내온다.
+                intent.putExtra("photo$index", uri.toString())
+            }
+            // list의사이즈를 넘겨주어서 몇 번째 photo index까지 putExtra 를 할 것인지 알려줄지.
+            intent.putExtra("photoListSize", imageUriList.size)
+            startActivity(intent)
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     private fun navigatePhotos() {
         // framework을 통해 사진을 가져오기. (saf)
         val intent = Intent(Intent.ACTION_GET_CONTENT) // contents를 안드로이드 내장에있는 activity를 실행시키게 한다.
@@ -90,12 +117,11 @@ class MainActivity : AppCompatActivity() {
             2000 -> {
                 val selectedImageUri : Uri? = data?.data
                 if (selectedImageUri != null) {
-
                     // 6개 그림이 넘을 때를 막는 예외처리
-                        if (imageUriList.size == 6) {
-                            Toast.makeText(this, "이미 사진이 꽉 찼습니다.", Toast.LENGTH_SHORT).show()
-                        }
-
+                    if (imageUriList.size == 6) {
+                        Toast.makeText(this, "이미 사진이 꽉 찼습니다.", Toast.LENGTH_SHORT).show()
+                        return
+                    }
                     imageUriList.add(selectedImageUri) // 위에서 null check를 해서 not null로 된다.
                     imageViewList[imageUriList.size -1].setImageURI(selectedImageUri)
                 }else {
@@ -143,10 +169,6 @@ class MainActivity : AppCompatActivity() {
             }.setNegativeButton("Deny") { _, _ -> }
             .create()
             .show()
-
-    }
-
-    private fun initStartPhotoFrameModeButton() {
 
     }
 
