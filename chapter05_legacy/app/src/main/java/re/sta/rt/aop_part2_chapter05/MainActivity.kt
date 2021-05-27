@@ -90,6 +90,12 @@ class MainActivity : AppCompatActivity() {
             2000 -> {
                 val selectedImageUri : Uri? = data?.data
                 if (selectedImageUri != null) {
+
+                    // 6개 그림이 넘을 때를 막는 예외처리
+                        if (imageUriList.size == 6) {
+                            Toast.makeText(this, "이미 사진이 꽉 찼습니다.", Toast.LENGTH_SHORT).show()
+                        }
+
                     imageUriList.add(selectedImageUri) // 위에서 null check를 해서 not null로 된다.
                     imageViewList[imageUriList.size -1].setImageURI(selectedImageUri)
                 }else {
