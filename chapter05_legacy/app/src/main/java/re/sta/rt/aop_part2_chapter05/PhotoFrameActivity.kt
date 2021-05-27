@@ -6,6 +6,7 @@ import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.ImageView
+import java.util.*
 import kotlin.concurrent.timer
 
 class PhotoFrameActivity : AppCompatActivity() {
@@ -22,11 +23,20 @@ class PhotoFrameActivity : AppCompatActivity() {
     // 5초에 한 번씩 돌면서, 몇 번째 index까지 돌았는제 position 을 저장하기 위함
     private var currentPosition = 0
 
+
+    // timer 를 껐다 켰다 (onStop 상태, onCreate 상태를 만들기 위해)
+    private var timer : Timer? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photoframe)
+
         getPhotoUriFromIntent()
-        startTimer()
+
+       // startTimer() 여기서 실행게 된다면, onCreate 에서의 한 번만 실행이 되기 때문에,
+        // 만약에 onStop 에서 캡슬을 한다고 했더라도, 다시 onStart 상태가 되었을 때,
+        // 다시 starTimer 가 되지 않기 때문에, onStart 쪽으로 이동.
     }
 
     private fun getPhotoUriFromIntent() {
@@ -40,7 +50,7 @@ class PhotoFrameActivity : AppCompatActivity() {
     }
 
     private fun startTimer() {
-        timer(period = 5 * 1000)  {
+        timer = timer(period = 5 * 1000)  {
             runOnUiThread {
                 // mainThread로 반환을해주고 mainThread 안에서 작업하기.
                 val current = currentPosition
@@ -66,4 +76,47 @@ class PhotoFrameActivity : AppCompatActivity() {
 
         }
     }
+    override fun onStop() {
+        super.onStop()
+
+        timer?.cancel()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        startTimer()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        timer?.cancel() //확인사살.
+    }
 }
+
+
+/*
+
+    <안드로이드 lifecycle>
+
+    onCreate 액티비티가 런치가 되었을 때, 첫 번째로 호출되는 함수 (ex.자바의 main)
+    onStart
+    onResume(앱 이동 시 여기부터 다시 호출.)
+    ------------ 여기까지가 사용자가 running이 되고있다고 느낄 수 있다.
+
+    다른 앱으로 이동할 때? onPause 가 호출 되고,
+    다시 원 앱으로 이동하게 될 땐, onResume 이 호출된다.
+
+    앱이 더 이상 보지 않을 때, onStop()이 된다.
+
+    더 이상 앱에서 system 에서 사라지게 될 때는 onDestroy
+
+    원 앱을 실행 중에서, 다른 앱을 사용하는 도중에, 다른 앱이 메모리를
+    너무 많이 차지하게 되어 메모리가 부족하다면,
+    onStop 상태에 있는 앱이 안드로이드에서 App process killed 이라 하게되고
+    그럴 경우에는 onCreate 로 다시 들어오게 된다.
+
+
+
+ */
