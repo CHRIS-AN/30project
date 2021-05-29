@@ -2,8 +2,7 @@ package re.sta.rt.aop_part2_chapter07
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-
-
+import android.Manifest
 /*
     (기능)
     Request runtime permissions (사생활보호 권한)
@@ -25,8 +24,27 @@ import android.os.Bundle
 
  */
 class MainActivity : AppCompatActivity() {
+    private val recordButton : RecordButton by lazy { findViewById(R.id.recordButton) }
+    private val requiredPermission = arrayOf(Manifest.permission.RECORD_AUDIO)
+    private var state = State.BEFORE_RECORDING //초기
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        requestAudioPermission()
+        initViews()
+    }
+    private fun requestAudioPermission() {
+        requestPermissions(requiredPermission, REQUEST_RECORD_AUDIO_PERMISSION)
+    }
+
+    private fun initViews() {
+        recordButton.updateIconWithState(state) // 현재상태를 전달해주기 위함.
+    }
+
+    companion object {
+       private const val REQUEST_RECORD_AUDIO_PERMISSION = 201
     }
 }
