@@ -126,7 +126,10 @@ class MainActivity : AppCompatActivity() {
             override fun onFinish() {
                 updateRemainTime(0)
                 updateSeekBar(0)
-                
+
+                // 타이머가 다 갔을 시, 타이머소리를 stop 후, 벨소리를 나게한다.
+                soundPool.autoPause()
+                bellSoundId?.let { soundPool.play(it, 1F,1F,0,0,1F) }
             }
         }
     
