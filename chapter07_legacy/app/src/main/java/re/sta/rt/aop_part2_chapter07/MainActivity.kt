@@ -15,6 +15,15 @@ import android.os.Bundle
     음성을 시각화하는 기능
  */
 
+/*
+    최초로 진입하면 <녹음 전 상태>,
+    녹음을 누르면   <녹음 중 상태>,
+    녹음을 정지를 누르면 <녹음 후>상태,
+    녹음한 내용을 재생 버튼을 클릭하면, <재생 중> 상태
+
+    녹음 전 -> 녹음 중 -> 녹음 후 -> 재생 중
+
+ */
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
