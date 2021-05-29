@@ -14,9 +14,6 @@ import android.widget.TextView
 
         오디오파일을 메모리에 로드를 한 뒤에, 비교적 빠르게 재생을 할 수 있게 도와줌
         긴 것은 힘들고, 짧은 것만 가능하게끔? 제약이 되어있다 !
-
-
-
  */
 class MainActivity : AppCompatActivity() {
 
@@ -64,6 +61,13 @@ class MainActivity : AppCompatActivity() {
         soundPool.autoPause()
     }
 
+    // 사운드파일들을 메모리에 올려놓는다면, 비용이 높다(메모리차지가 높다)
+    // 따라서, 되도록이면 하지 않을 시에, 메모리에 서 해지를 시켜주어야 한다.
+    override fun onDestroy() {
+        super.onDestroy()
+        soundPool.release()
+    }
+
     private fun initSounds() {
         // 두 개의 파일들을 로드하기 위한 메소드
         // 이렇게하면 로드된 파일 반환하게 된다 ↓
@@ -97,17 +101,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 // 이 시점에서 바로 countDown 이 시작된다.
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                    // seeKBar 가 nullable 할 때 나오는 에외처리.
-                    // 이 경우에는 countdowntimer를 시작하지 못하게 return 시킨다.
                     seekBar ?: return
 
-                    currentCountDownTimer = createCountDownTimer(seekBar.progress * 60 * 1000L)
-                    currentCountDownTimer?.start()
-
-                    // 카운트 다운이 시작함과 동시에,
-                    tickingSoundId?.let { soundId ->
-                    soundPool.play(soundId, 1F, 1F, 0, -1, 1F)
-                    }
+                    startCountDown();
                 }
             }
         )
@@ -124,14 +120,33 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFinish() {
-                updateRemainTime(0)
-                updateSeekBar(0)
-
-                // 타이머가 다 갔을 시, 타이머소리를 stop 후, 벨소리를 나게한다.
-                soundPool.autoPause()
-                bellSoundId?.let { soundPool.play(it, 1F,1F,0,0,1F) }
+                completeCountDown()
             }
         }
+
+    private fun completeCountDown() {
+        updateRemainTime(0)
+        updateSeekBar(0)
+
+        // 타이머가 다 갔을 시, 타이머소리를 stop 후, 벨소리를 나게한다.
+        soundPool.autoPause()
+        bellSoundId?.let {
+            soundPool.play(it, 1F,1F,0,0,1F)
+        }
+    }
+
+    private fun startCountDown() {
+        // seeKBar 가 nullable 할 때 나오는 에외처리.
+        // 이 경우에는 countdowntimer를 시작하지 못하게 return 시킨다.
+        currentCountDownTimer = createCountDownTimer(seekBar.progress * 60 * 1000L)
+        currentCountDownTimer?.start()
+
+        // 카운트 다운이 시작함과 동시에,
+        tickingSoundId?.let { soundId ->
+            soundPool.play(soundId, 1F, 1F, 0, -1, 1F)
+        }
+    }
+
     
     @SuppressLint("SetTextI18n")
     private fun updateRemainTime(remainMillis : Long) {
