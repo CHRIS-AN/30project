@@ -94,16 +94,18 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                    // count다운 도중에, 새로운 카운트를 설정을할 경우에를 막기 위함.
-                    currentCountDownTimer?.cancel() // 현재 카운트를 stop
-                    currentCountDownTimer = null
-
+                    stopCountDown()
                 }
                 // 이 시점에서 바로 countDown 이 시작된다.
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {
                     seekBar ?: return
 
-                    startCountDown();
+                    // 터치로 0을 설정 한 후에 터치를 놓아도, 타이머 소리가 나는 이슈 해결!
+                    if(seekBar.progress == 0) {
+                        stopCountDown()
+                    }else {
+                        startCountDown()
+                    }
                 }
             }
         )
@@ -123,6 +125,13 @@ class MainActivity : AppCompatActivity() {
                 completeCountDown()
             }
         }
+
+    private fun stopCountDown() {
+        // count다운 도중에, 새로운 카운트를 설정을할 경우에를 막기 위함.
+        currentCountDownTimer?.cancel() // 현재 카운트를 stop
+        currentCountDownTimer = null
+        soundPool.autoPause()
+    }
 
     private fun completeCountDown() {
         updateRemainTime(0)
