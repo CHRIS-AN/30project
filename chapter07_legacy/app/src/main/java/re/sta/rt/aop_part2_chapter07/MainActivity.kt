@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
             requestCode == REQUEST_RECORD_AUDIO_PERMISSION &&
                 grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
 
-        // 만약 recordPermission 권한이 부여가[ 되지 않았다면?
+        // 만약 recordPermission 권한이 부여가 되지 않았다면?
         if(!audioRecordPermissionGranted) {
             finish()
         }
