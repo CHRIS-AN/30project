@@ -6,6 +6,8 @@ import android.Manifest
 import android.content.pm.PackageManager
 
 /*
+    <녹음기 프로젝트>
+
     (기능)
     Request runtime permissions (사생활보호 권한)
     CustomView (시각화)
@@ -24,6 +26,8 @@ import android.content.pm.PackageManager
     녹음한 내용을 재생 버튼을 클릭하면, <재생 중> 상태
 
     녹음 전 -> 녹음 중 -> 녹음 후 -> 재생 중
+
+
 
  */
 class MainActivity : AppCompatActivity() {
