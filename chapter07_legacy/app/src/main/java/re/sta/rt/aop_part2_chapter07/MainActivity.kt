@@ -17,6 +17,7 @@ import android.content.pm.PackageManager
  */
 
 /*
+
     최초로 진입하면 <녹음 전 상태>,
     녹음을 누르면   <녹음 중 상태>,
     녹음을 정지를 누르면 <녹음 후>상태,
