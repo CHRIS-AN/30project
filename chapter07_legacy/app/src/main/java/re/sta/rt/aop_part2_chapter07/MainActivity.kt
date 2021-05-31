@@ -4,6 +4,8 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.Manifest
 import android.content.pm.PackageManager
+import android.media.MediaParser
+import android.media.MediaPlayer
 import android.media.MediaRecorder
 
 /*
@@ -37,9 +39,14 @@ class MainActivity : AppCompatActivity() {
     private val recordingFilePath : String by lazy {
         "${externalCacheDir?.absoluteFile}/recording.3gp"
     }
+    private var player : MediaPlayer? = null
     private var recorder : MediaRecorder? = null // 안쓰는 경우에는 메모리에서 해지
     private var state = State.BEFORE_RECORDING //초기
 
+    set(value) {
+        field = value
+        recordButton.updateIconWithState(value) // 새로 들어온 value를 넣는다. 새로운 state가 할당될 때마다, 아이콘이 바뀌게 될것이다.
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +54,7 @@ class MainActivity : AppCompatActivity() {
 
         requestAudioPermission()
         initViews()
+        bindViews()
     }
 
     // 요청한 권한에대해서 결과값을 받는다.
@@ -78,6 +86,18 @@ class MainActivity : AppCompatActivity() {
         recordButton.updateIconWithState(state) // 현재상태를 전달해주기 위함.
     }
 
+    private fun bindViews() {
+        recordButton.setOnClickListener {
+            // 상태마다 다르게 행동하게
+            when(state) {
+                State.BEFORE_RECORDING -> { startRecording() }
+                State.ON_RECORDING -> { stopRecording() }
+                State.AFTER_RECORDING -> { startPlaying() }
+                State.ON_PLAYING -> { stopPlaying() }
+            }
+        }
+    }
+
     private fun startRecording() {
         recorder = MediaRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC) // 접근하기
@@ -91,8 +111,34 @@ class MainActivity : AppCompatActivity() {
             prepare() // 녹음할 수 있는 상태
         }
         recorder?.start() // 녹음 시작
+        state = State.ON_RECORDING
     }
 
+    // 녹음 stop
+    private fun stopRecording() {
+        recorder?.run {
+            stop()
+            release()
+        }
+        recorder = null
+        state = State.AFTER_RECORDING
+    }
+
+    // 녹음 play
+    private fun startPlaying() {
+        player = MediaPlayer().apply {
+            setDataSource(recordingFilePath)
+            prepare()
+        }
+        player?.start()
+        state = State.ON_PLAYING
+    }
+
+    private fun stopPlaying() {
+        player?.release()
+        player = null
+        state = State.ON_RECORDING
+    }
 
 
 
