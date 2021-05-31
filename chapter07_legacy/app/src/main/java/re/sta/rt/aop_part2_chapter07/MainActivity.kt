@@ -135,6 +135,7 @@ class MainActivity : AppCompatActivity() {
             prepare() // 녹음할 수 있는 상태
         }
         recorder?.start() // 녹음 시작
+        soundVisualizerView.startVisualizing()
         state = State.ON_RECORDING
     }
 
@@ -145,6 +146,7 @@ class MainActivity : AppCompatActivity() {
             release()
         }
         recorder = null
+        soundVisualizerView.stopVisualizing()
         state = State.AFTER_RECORDING
     }
 
