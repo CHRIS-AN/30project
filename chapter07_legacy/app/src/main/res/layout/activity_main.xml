@@ -46,8 +46,11 @@
     <re.sta.rt.aop_part2_chapter07.RecordButton
         android:id="@+id/recordButton"
         android:layout_width="100dp"
+        tools:src="@drawable/ic_record"
+        android:padding="25dp"
         android:layout_height="100dp"
         android:layout_marginBottom="50dp"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
