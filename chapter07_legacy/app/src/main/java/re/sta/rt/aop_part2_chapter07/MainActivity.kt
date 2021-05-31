@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.Manifest
 import android.content.pm.PackageManager
+import android.media.MediaRecorder
 
 /*
     <녹음기 프로젝트>
@@ -33,6 +34,10 @@ import android.content.pm.PackageManager
 class MainActivity : AppCompatActivity() {
     private val recordButton : RecordButton by lazy { findViewById(R.id.recordButton) }
     private val requiredPermission = arrayOf(Manifest.permission.RECORD_AUDIO)
+    private val recordingFilePath : String by lazy {
+        "${externalCacheDir?.absoluteFile}/recording.3gp"
+    }
+    private var recorder : MediaRecorder? = null // 안쓰는 경우에는 메모리에서 해지
     private var state = State.BEFORE_RECORDING //초기
 
 
@@ -72,6 +77,24 @@ class MainActivity : AppCompatActivity() {
     private fun initViews() {
         recordButton.updateIconWithState(state) // 현재상태를 전달해주기 위함.
     }
+
+    private fun startRecording() {
+        recorder = MediaRecorder().apply {
+            setAudioSource(MediaRecorder.AudioSource.MIC) // 접근하기
+            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+            /*
+                앱이 저장할 수 있는 storage 는 scope 가 내부(internal)랑 외부(external)가 있다.
+             */
+            // 녹음된 걸 압축해서 저장 (external) why? 녹음은 용량이 크기 때문
+            setOutputFile(recordingFilePath)
+            prepare() // 녹음할 수 있는 상태
+        }
+        recorder?.start() // 녹음 시작
+    }
+
+
+
 
     companion object {
        private const val REQUEST_RECORD_AUDIO_PERMISSION = 201
