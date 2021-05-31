@@ -163,9 +163,10 @@ class MainActivity : AppCompatActivity() {
                 setDataSource(recordingFilePath)
                 prepare()
             }
+        // 완료타이밍 진행하기 (현재 전달된 파일을 전달받고 재생했을 때)
         player?.setOnCompletionListener {
             stopPlaying()
-            state = State.AFTER_RECORDING
+            state = State.AFTER_RECORDING // 재생이 다 됐다.
         }
         player?.start()
         soundVisualizerView.startVisualizing(true)
