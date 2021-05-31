@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.media.MediaParser
 import android.media.MediaPlayer
 import android.media.MediaRecorder
+import android.widget.Button
 
 /*
     <녹음기 프로젝트>
@@ -34,17 +35,20 @@ import android.media.MediaRecorder
 
  */
 class MainActivity : AppCompatActivity() {
+    private val resetButton : Button by lazy { findViewById(R.id.resetButton) }
     private val recordButton : RecordButton by lazy { findViewById(R.id.recordButton) }
     private val requiredPermission = arrayOf(Manifest.permission.RECORD_AUDIO)
-    private val recordingFilePath : String by lazy {
-        "${externalCacheDir?.absoluteFile}/recording.3gp"
-    }
+    private val recordingFilePath : String by lazy { "${externalCacheDir?.absoluteFile}/recording.3gp" }
     private var player : MediaPlayer? = null
     private var recorder : MediaRecorder? = null // 안쓰는 경우에는 메모리에서 해지
     private var state = State.BEFORE_RECORDING //초기
 
+
+        // state 를 set 하는 공간.
     set(value) {
         field = value
+        resetButton.isEnabled =
+            (value == State.AFTER_RECORDING) || (value == State.ON_PLAYING)
         recordButton.updateIconWithState(value) // 새로 들어온 value를 넣는다. 새로운 state가 할당될 때마다, 아이콘이 바뀌게 될것이다.
     }
 
@@ -55,6 +59,7 @@ class MainActivity : AppCompatActivity() {
         requestAudioPermission()
         initViews()
         bindViews()
+        initVariables()
     }
 
     // 요청한 권한에대해서 결과값을 받는다.
@@ -87,6 +92,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun bindViews() {
+
+        resetButton.setOnClickListener {
+            // 재생 중에 reset 할 수도 있다.
+            stopPlaying()
+            state = State.BEFORE_RECORDING
+
+        }
         recordButton.setOnClickListener {
             // 상태마다 다르게 행동하게
             when(state) {
@@ -97,6 +109,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    // set 에 다시 state 를 넣어주는
+    private fun initVariables() {
+        state = State.BEFORE_RECORDING
+    }
+
 
     private fun startRecording() {
         recorder = MediaRecorder().apply {
