@@ -82,7 +82,7 @@ class SoundVisualizerView(
     }
 
     fun stopVisualizing() {
-        
+
         // 처음 리플레이를 할 땐 괜찮지만, 두 세번 리플레잉 할 때, 다르게 동작하는 부분 해결
         replayingPosition = 0
 
