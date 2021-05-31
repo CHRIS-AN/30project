@@ -32,6 +32,7 @@ class CountUpView(
         handler?.removeCallbacks(countUpAction)
     }
 
+    // ui 클리어
     fun clearCountTime() {
         updateCountTime(0)
     }

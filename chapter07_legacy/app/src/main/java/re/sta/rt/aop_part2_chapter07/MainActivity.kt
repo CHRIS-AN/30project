@@ -102,6 +102,11 @@ class MainActivity : AppCompatActivity() {
         resetButton.setOnClickListener {
             // 재생 중에 reset 할 수도 있다.
             stopPlaying()
+
+            // ui 클리어
+            soundVisualizerView.clearVisualization()
+            recordTimeTextView.clearCountTime()
+            
             state = State.BEFORE_RECORDING
 
         }

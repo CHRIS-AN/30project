@@ -86,6 +86,7 @@ class SoundVisualizerView(
         handler?.removeCallbacks(visualizeRepeatAction)
     }
 
+    // ui 클리어
     fun clearVisualization() {
         drawingAmplitudes = emptyList()
         invalidate()
