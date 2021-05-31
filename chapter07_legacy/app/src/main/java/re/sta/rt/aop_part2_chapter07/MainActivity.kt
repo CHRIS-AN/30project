@@ -35,6 +35,8 @@ import android.widget.Button
 
  */
 class MainActivity : AppCompatActivity() {
+
+    private val soundVisualizerView : SoundVisualizerView by lazy { findViewById(R.id.soundVisualizerView) }
     private val resetButton : Button by lazy { findViewById(R.id.resetButton) }
     private val recordButton : RecordButton by lazy { findViewById(R.id.recordButton) }
     private val requiredPermission = arrayOf(Manifest.permission.RECORD_AUDIO)
@@ -92,7 +94,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun bindViews() {
-
+        // 리핏액션이 반복적으로 동작할 때?
+        // /이 곳이 호출 되고, 오디오의 maxAmplitude 반환을 가져올 수있다.
+        soundVisualizerView.onRequestCurrentAmplitude = {
+            recorder?.maxAmplitude ?: 0
+        }
         resetButton.setOnClickListener {
             // 재생 중에 reset 할 수도 있다.
             stopPlaying()

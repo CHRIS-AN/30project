@@ -12,15 +12,31 @@ class SoundVisualizerView(
     attrs : AttributeSet? = null
 ) : View(context, attrs) {
 
-    val amplitudePaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    var onRequestCurrentAmplitude : (()->Int)? = null
+
+    private val amplitudePaint = Paint(Paint.ANTI_ALIAS_FLAG)
         .apply {
             color = context.getColor(R.color.purple_500)
             strokeWidth = LINE_WIDTH
             strokeCap = Paint.Cap.ROUND
         }
-    var drawingWidth : Int = 0
-    var drawingHeight : Int = 0
-    var drawingAmplitudes : List<Int> = (0..10).map { Random.nextInt(Short.MAX_VALUE.toInt()) }
+    private var drawingWidth : Int = 0
+    private var drawingHeight : Int = 0
+    private var drawingAmplitudes : List<Int> = emptyList()
+
+
+
+    // animation
+    private val visualizeRepeatAction : Runnable = object : Runnable {
+        override fun run() {
+            // Amplitude , Draw
+            val currentAmplitude = onRequestCurrentAmplitude?.invoke() ?: 0
+            // 들어온 순서 마지막이 첫번째가 되게끔.
+            drawingAmplitudes = listOf(currentAmplitude) + drawingAmplitudes // 순서가 시간에 맞춰서 뽑힌다.
+            invalidate() // 이것을 추가를 안해주면, 데이터는 계속 추가가되는데 drawing이 안될 것이다.
+            handler?.postDelayed(this, ACTION_INTERVAL)
+        }
+    }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -55,9 +71,18 @@ class SoundVisualizerView(
         }
     }
 
+    fun startVisualizing () {
+        handler?.post(visualizeRepeatAction)
+    }
+
+    fun stopVisualizing () {
+        handler?.removeCallbacks(visualizeRepeatAction)
+    }
+
     companion object {
         private const val LINE_WIDTH = 10F
         private const val LINE_SPACE = 15F
         private const val MAX_AMPLITUDE = Short.MAX_VALUE.toFloat()
+        private const val ACTION_INTERVAL = 20L
     }
 }
