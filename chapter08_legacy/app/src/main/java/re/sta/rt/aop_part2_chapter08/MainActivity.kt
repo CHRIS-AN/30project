@@ -1,12 +1,12 @@
 package re.sta.rt.aop_part2_chapter08
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.EditText
 import android.widget.ImageButton
+import androidx.appcompat.app.AppCompatActivity
 
 /*
     웹브라우저 앱
@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         webView.apply {
             webViewClient =  WebViewClient() // 외부웹 브라우저로 가지 않고, 우리가 지정한 웹뷰를 사용함.
             settings.javaScriptEnabled = true // 자바스크립트를 사용하겠다
-          //  loadUrl(DEFAULT_URL)
+            loadUrl(DEFAULT_URL)
         }
     }
 
@@ -81,6 +81,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val DEFAULT_URL = "http://www.goole.com"
+        private const val DEFAULT_URL = "http://www.google.com"
     }
 }
