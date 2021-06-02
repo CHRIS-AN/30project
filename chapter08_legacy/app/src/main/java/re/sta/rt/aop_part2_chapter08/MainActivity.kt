@@ -40,19 +40,33 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    // Back 버튼을 눌렀을 시, 앱에서 나가지 않고, 뒤로가기가 실행되게끔,
+    override fun onBackPressed() {
+        if(webView.canGoBack()) {
+            webView.goBack()
+        }else {
+            super.onBackPressed()
+        }
+    }
+
     // 뷰를 초기화하는 init 뷰
     private fun initViews() {
 
         webView.apply {
             webViewClient =  WebViewClient() // 외부웹 브라우저로 가지 않고, 우리가 지정한 웹뷰를 사용함.
             settings.javaScriptEnabled = true // 자바스크립트를 사용하겠다
-            loadUrl("http://www.google.com")
+          //  loadUrl(DEFAULT_URL)
         }
     }
 
     private fun bindViews() { // 액션이 발생한 뷰(1), 액션아이디 안에는 액션던한 uri?(2) ?(3)
+
+        goHomeButton.setOnClickListener {
+            webView.loadUrl(DEFAULT_URL)
+        }
+
         addressBar.setOnEditorActionListener { v, actionId1, event ->
-            if(actionId1 == EditorInfo.IME_ACTION_DONE) {
+            if (actionId1 == EditorInfo.IME_ACTION_DONE) {
                 webView.loadUrl(v.text.toString())
             }// done 한 뒤에, 키보드를 내려야하기 때문에 false를 사용
             return@setOnEditorActionListener false
@@ -64,6 +78,9 @@ class MainActivity : AppCompatActivity() {
         goFowardButton.setOnClickListener {
             webView.goForward()
         }
+    }
 
+    companion object {
+        private const val DEFAULT_URL = "http://www.goole.com"
     }
 }
