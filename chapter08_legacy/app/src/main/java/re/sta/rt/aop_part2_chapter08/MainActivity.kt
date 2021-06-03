@@ -7,6 +7,7 @@ import android.webkit.WebViewClient
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 /*
     웹브라우저 앱
@@ -29,7 +30,7 @@ class MainActivity : AppCompatActivity() {
     private val goHomeButton : ImageButton by lazy { findViewById(R.id.goHomeButton) }
     private val goBackButton : ImageButton by lazy { findViewById(R.id.goBackButton) }
     private val goFowardButton : ImageButton by lazy { findViewById(R.id.goForwardButton) }
-
+    private val refreshLayout : SwipeRefreshLayout by lazy { findViewById(R.id.refreshLayout)}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,7 +79,25 @@ class MainActivity : AppCompatActivity() {
         goFowardButton.setOnClickListener {
             webView.goForward()
         }
+
+        refreshLayout.setOnRefreshListener {
+            webView.reload()  // 실제 웹뷰를  refresh ( 다시 실행 )
+
+        }
     }
+
+    // refresh가 reload된 이벤트를 받아서 isRefeshing 처리를 해주어야 한다.
+    inner class WebViewClient : android.webkit.WebViewClient() {
+        // 페이지가 로딩이 끝났을 때,
+        override fun onPageFinished(view: WebView?, url: String?) {
+            super.onPageFinished(view, url)
+
+            refreshLayout.isRefreshing = false
+        }
+    }
+
+
+
 
     companion object {
         private const val DEFAULT_URL = "http://www.google.com"
