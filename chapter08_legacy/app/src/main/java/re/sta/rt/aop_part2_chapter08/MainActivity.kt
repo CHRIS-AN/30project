@@ -3,6 +3,7 @@ package re.sta.rt.aop_part2_chapter08
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
+import android.webkit.URLUtil
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -70,9 +71,17 @@ class MainActivity : AppCompatActivity() {
             webView.loadUrl(DEFAULT_URL)
         }
 
+        // done
         addressBar.setOnEditorActionListener { v, actionId1, event ->
+
+            // http 를 작성하지 않더라도, http가 붙은 뒤 로딩되게 끔 설정.
             if (actionId1 == EditorInfo.IME_ACTION_DONE) {
-                webView.loadUrl(v.text.toString())
+                val loadingUrl = v.text.toString()
+                if(URLUtil.isNetworkUrl(loadingUrl)) {
+                    webView.loadUrl(loadingUrl)
+                }
+                    webView.loadUrl("http://$loadingUrl")
+
             }// done 한 뒤에, 키보드를 내려야하기 때문에 false를 사용
             return@setOnEditorActionListener false
         }

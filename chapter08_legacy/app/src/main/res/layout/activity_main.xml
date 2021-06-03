@@ -30,6 +30,7 @@
 
 
         <EditText
+            android:selectAllOnFocus="true"
             android:id="@+id/addressBar"
             android:layout_width="0dp"
             android:layout_height="32dp"
