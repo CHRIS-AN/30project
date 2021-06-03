@@ -106,6 +106,14 @@ class MainActivity : AppCompatActivity() {
             refreshLayout.isRefreshing = false
             // 완료 될 때, 프로그레스 바가 사라지기.
             progressBar.hide()
+
+            // 뒤로 갈 수 있을 땐, 뒤로가기가 되고, 뒤로갈게 없다면, 버튼 비활성화
+            goBackButton.isEnabled = webView.canGoBack()
+            // 앞으로 갈 수......
+            goFowardButton.isEnabled = webView.canGoForward()
+            // 우리가 입력한 url 과 실제 url 의 괴리가 있으니, 실제 url 을 보여주게끔하기.
+            // ex) www.naver.com 하여도 m.naver.com 로 넘어가게끔 하는..?
+            addressBar.setText(url)
         }
     }
 
