@@ -1,12 +1,15 @@
 package re.sta.rt.aop_part2_chapter08
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
+import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.ContentLoadingProgressBar
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 /*
@@ -31,7 +34,7 @@ class MainActivity : AppCompatActivity() {
     private val goBackButton : ImageButton by lazy { findViewById(R.id.goBackButton) }
     private val goFowardButton : ImageButton by lazy { findViewById(R.id.goForwardButton) }
     private val refreshLayout : SwipeRefreshLayout by lazy { findViewById(R.id.refreshLayout)}
-
+    private val progressBar : ContentLoadingProgressBar by lazy { findViewById(R.id.progressBar)}
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -55,6 +58,7 @@ class MainActivity : AppCompatActivity() {
 
         webView.apply {
             webViewClient =  WebViewClient() // 외부웹 브라우저로 가지 않고, 우리가 지정한 웹뷰를 사용함.
+            webChromeClient = WebChromeClient()
             settings.javaScriptEnabled = true // 자바스크립트를 사용하겠다
             loadUrl(DEFAULT_URL)
         }
@@ -88,14 +92,30 @@ class MainActivity : AppCompatActivity() {
 
     // refresh가 reload된 이벤트를 받아서 isRefeshing 처리를 해주어야 한다.
     inner class WebViewClient : android.webkit.WebViewClient() {
+
+        override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+            super.onPageStarted(view, url, favicon)
+            // 시작될 때, 프로그레스 바가 생성.
+            progressBar.show()
+        }
+
         // 페이지가 로딩이 끝났을 때,
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
 
             refreshLayout.isRefreshing = false
+            // 완료 될 때, 프로그레스 바가 사라지기.
+            progressBar.hide()
         }
     }
 
+    inner class WebChromeClient : android.webkit.WebChromeClient() {
+        override fun onProgressChanged(view: WebView?, newProgress: Int) {
+            super.onProgressChanged(view, newProgress)
+
+            progressBar.progress = newProgress
+        }
+    }
 
 
 
