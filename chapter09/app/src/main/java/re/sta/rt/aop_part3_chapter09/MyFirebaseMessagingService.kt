@@ -3,9 +3,14 @@ package re.sta.rt.aop_part3_chapter09
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Context
 import android.os.Build
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+
+\\
 
 /*
     현재 등록된 토큰.
@@ -26,6 +31,22 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     // 매니페스트에 등록을 했을 때, Cloud Messaing 에서 수신할 때마다, 이 메서드를 호출하게 된다.
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
+
+
+        createNotificationChannal();
+
+        val title = message.data["title"]
+        val message = message.data["message"]
+
+        NotificationCompat.Builder(
+            this,
+            CHANNAL_ID
+        ).setSmallIcon(R.drawable.ic_notifications)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        NotificationManagerCompat.from(this)
+            .notify(1, )
     }
 
 
@@ -39,6 +60,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             )
 
             channal.description = CHANNAL_DESCRIPTION
+
+            // 이러면 채널 완성 !!
+            (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+                .createNotificationChannel(channal)
         }
 
     }
