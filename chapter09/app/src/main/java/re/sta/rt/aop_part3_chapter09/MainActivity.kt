@@ -39,7 +39,6 @@ class MainActivity : AppCompatActivity() {
 
         initFirebase()
 
-
     }
 
 
