@@ -1,0 +1,2 @@
+rootProject.name = "aop-part3-chapter10"
+include ':app'
