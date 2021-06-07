@@ -6,6 +6,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -22,6 +23,11 @@ import com.google.firebase.messaging.RemoteMessage
     따라서, 변경될 가능성이 있으니?
     현재 토큰을 가져와서 쓰는 코드르 작성하면 안좋다.
     따라서, FirebaseMessagingService 에서 onNewToken을 할 때마다, 서버에서 해당 토큰 갱신!!
+ */
+
+/*
+    RemoteViews 란?
+
  */
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
@@ -72,17 +78,66 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun createNotification(
-        type: NotificationType, title:String?, message:String?) : Notification {
-       return NotificationCompat.Builder(
-            this,
-            CHANNAL_ID
+        type: NotificationType,
+        title:String?,
+        message:String?
+    ) : Notification {
+       val notificationBuilder =  NotificationCompat.Builder(this, CHANNAL_ID
         ).setSmallIcon(R.drawable.ic_notifications)
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .build()
 
+        when(type) {
+            NotificationType.NORMAL -> Unit
+            NotificationType.EXPANDABLE -> {
+                notificationBuilder.setStyle(
+                    NotificationCompat.BigTextStyle()
+                        .bigText(
+                            "\uD83D\uDE00 \uD83D\uDE03 " +
+                                    "\uD83D\uDE04 \uD83D\uDE01 " +
+                                    "\uD83D\uDE06 \uD83D\uDE05 " +
+                                    "\uD83D\uDE02 \uD83E\uDD23 " +
+                                    "\uD83D\uDE07 \uD83D\uDE09 " +
+                                    "\uD83D\uDE0A \uD83D\uDE42 " +
+                                    "\uD83D\uDE43 ☺ \uD83D\uDE0B " +
+                                    "\uD83D\uDE0C \uD83D\uDE0D " +
+                                    "\uD83E\uDD70 \uD83D\uDE18 " +
+                                    "\uD83D\uDE17 \uD83D\uDE19 " +
+                                    "\uD83D\uDE1A \uD83E\uDD2A " +
+                                    "\uD83D\uDE1C \uD83D\uDE1D " +
+                                    "\uD83D\uDE1B \uD83E\uDD11 " +
+                                    "\uD83D\uDE0E \uD83E\uDD13 " +
+                                    "\uD83E\uDDD0 \uD83E\uDD20 " +
+                                    "\uD83E\uDD73 \uD83E\uDD17 " +
+                                    "\uD83E\uDD21 \uD83D\uDE0F " +
+                                    "\uD83D\uDE36 \uD83D\uDE10 " +
+                                    "\uD83D\uDE11 \uD83D\uDE12 " +
+                                    "\uD83D\uDE44 \uD83E\uDD28 " +
+                                    "\uD83E\uDD14 \uD83E\uDD2B " +
+                                    "\uD83E\uDD2D \uD83E\uDD25 " +
+                                    "\uD83D\uDE33 \uD83D\uDE1E "
+                        )
+                )
+            }
+            NotificationType.CUSTOM -> {
+                notificationBuilder.setStyle(
+                    NotificationCompat.DecoratedCustomViewStyle())
+                    .setCustomContentView(
+                        RemoteViews(
+                            packageName,
+                            R.layout.view_custom_notification
+                        ).apply {
+                            setTextViewText(R.id.title, title)
+                            setTextViewText(R.id.message, message)
+                        }
+                    )
+
+            }
+        }
+        return notificationBuilder.build()
     }
+
 
     companion object {
         private const val CHANNAL_NAME = "Emoji Party"
