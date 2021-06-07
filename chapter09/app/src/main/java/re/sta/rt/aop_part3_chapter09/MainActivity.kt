@@ -1,5 +1,7 @@
 package re.sta.rt.aop_part3_chapter09
 
+import android.content.Intent
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
@@ -41,6 +43,12 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+        setIntent(intent) // 새로 들어온 intent 로 교체.
+        updateResult(true)
+    }
 
     private fun initFirebase() {
         // 등록된 토큰 가져오기
@@ -49,6 +57,18 @@ class MainActivity : AppCompatActivity() {
                 val token = task.result // 성공했을 경우. firebase Messaing에 token을 가져온다.
                 firebaseToken.text = token // 여기다가 추가해준다.
             }
+        }
+    }
+
+    private fun updateResult(isNewIntent : Boolean = false) {
+        //true = 갱신
+        //false = 실행되었다.
+
+        resultTextView.text = (intent.getStringExtra("notificationType") ?: "앱 런처") +
+        if(isNewIntent) {
+            "(으)로 갱신했습니다."
+        }else {
+            "(으)로 실행되었습니다."
         }
     }
 }

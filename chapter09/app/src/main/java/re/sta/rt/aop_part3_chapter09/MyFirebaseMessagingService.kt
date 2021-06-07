@@ -97,6 +97,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+           .setContentIntent(pendingIntent)
+           .setAutoCancel(true)
 
         when(type) {
             NotificationType.NORMAL -> Unit
