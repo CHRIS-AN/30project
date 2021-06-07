@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class QuotePagerAdapter(
-    val quotes:List<Quote>
+    private val quotes:List<Quote>
 ):RecyclerView.Adapter<QuotePagerAdapter.QuoteViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -19,7 +19,7 @@ class QuotePagerAdapter(
 
 
     override fun onBindViewHolder(holder: QuoteViewHolder, position: Int) {
-
+        holder.bind(quotes[position]) // 해당 위치의 quote를 옮기기
     }
 
     override fun getItemCount() = quotes.size
