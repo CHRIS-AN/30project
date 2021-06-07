@@ -1,6 +1,7 @@
 package re.sta.rt.aop_part3_chapter09
 
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -10,7 +11,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
-\\
+
 
 /*
     현재 등록된 토큰.
@@ -29,24 +30,26 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.onNewToken(p0)
     }
     // 매니페스트에 등록을 했을 때, Cloud Messaing 에서 수신할 때마다, 이 메서드를 호출하게 된다.
-    override fun onMessageReceived(message: RemoteMessage) {
-        super.onMessageReceived(message)
-
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        super.onMessageReceived(remoteMessage)
 
         createNotificationChannal();
 
-        val title = message.data["title"]
-        val message = message.data["message"]
+        val type = remoteMessage.data["type"]
+            ?.let { NotificationType.valueOf(it) }
 
-        NotificationCompat.Builder(
-            this,
-            CHANNAL_ID
-        ).setSmallIcon(R.drawable.ic_notifications)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        val title = remoteMessage.data["title"]
+        val message = remoteMessage.data["message"]
+
+        // type 이 null(데이터가 x) 경우.
+        type ?: return
+
+
+
+        // 알림을 보여지는 것을 확인할 수 있다.
         NotificationManagerCompat.from(this)
-            .notify(1, )
+            .notify(type.id, createNotification(type, title, message))
+        // type.id 로 type 별로 알림을 보이게한다.
     }
 
 
@@ -65,6 +68,19 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
                 .createNotificationChannel(channal)
         }
+
+    }
+
+    private fun createNotification(
+        type: NotificationType, title:String?, message:String?) : Notification {
+       return NotificationCompat.Builder(
+            this,
+            CHANNAL_ID
+        ).setSmallIcon(R.drawable.ic_notifications)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .build()
 
     }
 
