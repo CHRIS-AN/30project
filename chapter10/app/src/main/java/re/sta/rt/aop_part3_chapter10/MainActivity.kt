@@ -2,6 +2,8 @@ package re.sta.rt.aop_part3_chapter10
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.ProgressBar
 import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -11,9 +13,8 @@ import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewPager : ViewPager2 by lazy {
-        findViewById(R.id.viewPager)
-    }
+    private val viewPager : ViewPager2 by lazy { findViewById(R.id.viewPager)}
+    private val progressBar : ProgressBar by lazy { findViewById(R.id.progressBar) }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +36,11 @@ class MainActivity : AppCompatActivity() {
                 minimumFetchIntervalInSeconds = 0
             }
         )
+        // 리모트가 패치가 완료되는 시점.
         remoteConfig.fetchAndActivate().addOnCompleteListener {
+
+            progressBar.visibility = View.GONE
+
             if(it.isSuccessful) {
                 val quotes = parseQuotesJson(remoteConfig.getString("quotes")); //gson으로 파싱하면 좀 더 쉽다.
                 val isNameRevealed = remoteConfig.getBoolean("is_name_revealed")
