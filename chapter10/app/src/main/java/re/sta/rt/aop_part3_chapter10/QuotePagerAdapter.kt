@@ -8,7 +8,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class QuotePagerAdapter(
-    private val quotes:List<Quote>
+    private val quotes : List<Quote>,
+    private val isNameRevealed : Boolean
+
 ):RecyclerView.Adapter<QuotePagerAdapter.QuoteViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -19,7 +21,7 @@ class QuotePagerAdapter(
 
 
     override fun onBindViewHolder(holder: QuoteViewHolder, position: Int) {
-        holder.bind(quotes[position]) // 해당 위치의 quote를 옮기기
+        holder.bind(quotes[position], isNameRevealed) // 해당 위치의 quote를 옮기기
     }
 
     override fun getItemCount() = quotes.size
@@ -31,9 +33,15 @@ class QuotePagerAdapter(
         private val nameTextView : TextView = itemView.findViewById(R.id.nameTextVIew)
 
         // bind메소드 구현
-        fun bind(quote : Quote) {
+        fun bind(quote : Quote, isNameRevealed: Boolean) {
             quoteTextView.text = quote.quote // 명언을 넣어주기.
-            nameTextView.text = quote.name // 명언 사람 넣어주기
+            
+            if(isNameRevealed) {
+                nameTextView.text = quote.name // 명언 사람 넣어주기
+                nameTextView.visibility = View.VISIBLE
+            }else {
+                nameTextView.visibility = View.GONE
+            }
 
         }
     }
