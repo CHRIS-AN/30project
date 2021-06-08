@@ -64,7 +64,8 @@ class MainActivity : AppCompatActivity() {
     private fun displayQuitesPager(quotes: List<Quote>, isNameRevealed: Boolean) {
 
         viewPager.adapter = QuotePagerAdapter(
-            quotes
+            quotes = quotes,
+            isNameRevealed = isNameRevealed
         )
     }
 

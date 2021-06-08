@@ -1,5 +1,6 @@
 package re.sta.rt.aop_part3_chapter10
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.TextureView
 import android.view.View
@@ -33,11 +34,12 @@ class QuotePagerAdapter(
         private val nameTextView : TextView = itemView.findViewById(R.id.nameTextVIew)
 
         // bind메소드 구현
+        @SuppressLint("SetTextI18n")
         fun bind(quote : Quote, isNameRevealed: Boolean) {
-            quoteTextView.text = quote.quote // 명언을 넣어주기.
-            
+            quoteTextView.text = "\"${quote.quote}\"" // 명언을 넣어주기.
+
             if(isNameRevealed) {
-                nameTextView.text = quote.name // 명언 사람 넣어주기
+                nameTextView.text = "- ${quote.name}" // 명언 사람 넣어주기
                 nameTextView.visibility = View.VISIBLE
             }else {
                 nameTextView.visibility = View.GONE
