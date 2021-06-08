@@ -10,6 +10,7 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import org.json.JSONArray
 import org.json.JSONObject
+import kotlin.math.absoluteValue
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,12 +22,26 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-     //   initViews()
+
         initData()
+        initViews()
     }
 
     private fun initViews() {
-
+        // -2 < -1 < 0(실제 device에서 보임) > 1 > 2
+        viewPager.setPageTransformer { page, position ->
+            when{
+                position.absoluteValue >= 1F -> {
+                    page.alpha = 0F
+                }
+                position == 0F -> {
+                    page.alpha = 1F
+                }
+                else -> {
+                    page.alpha = 1F - (2 * position.absoluteValue)
+                }
+            }
+        }
     }
 
     private fun initData() {
