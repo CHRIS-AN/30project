@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         initData()
         initViews()
     }
-
+    // 페이저 전환효과
     private fun initViews() {
         // -2 < -1 < 0(실제 device에서 보임) > 1 > 2
         viewPager.setPageTransformer { page, position ->
@@ -83,11 +83,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun displayQuitesPager(quotes: List<Quote>, isNameRevealed: Boolean) {
 
-        viewPager.adapter = QuotePagerAdapter(
+        val adapter = QuotePagerAdapter(
             quotes = quotes,
             isNameRevealed = isNameRevealed
         )
-    }
+        viewPager.adapter = adapter
+        viewPager.setCurrentItem(adapter.itemCount / 2, false)
 
+    }
 }
 
