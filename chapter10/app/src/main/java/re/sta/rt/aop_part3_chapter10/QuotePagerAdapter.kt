@@ -22,10 +22,13 @@ class QuotePagerAdapter(
 
 
     override fun onBindViewHolder(holder: QuoteViewHolder, position: Int) {
-        holder.bind(quotes[position], isNameRevealed) // 해당 위치의 quote를 옮기기
+        val actualPosition = position % quotes.size
+
+        holder.bind(quotes[actualPosition], isNameRevealed) // 해당 위치의 quote를 옮기기
     }
 
-    override fun getItemCount() = quotes.size
+    override fun getItemCount() = Int.MAX_VALUE
+        //quotes.size
 
 
     class QuoteViewHolder(itemView:View):RecyclerView.ViewHolder(itemView ) {
