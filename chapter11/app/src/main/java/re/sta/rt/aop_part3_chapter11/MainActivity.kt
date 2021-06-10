@@ -1,5 +1,6 @@
 package re.sta.rt.aop_part3_chapter11
 
+import android.app.AlarmManager
 import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.content.Context
@@ -68,14 +69,47 @@ class MainActivity : AppCompatActivity() {
         val onOffButton = findViewById<Button>(R.id.onOffButton)
         onOffButton.setOnClickListener {
             // 저장한 데이터를 확인한다.
+            val model = it.tag as? AlarmDisplayModel ?: return@setOnClickListener
+            val newModel = saveAlarmModel(model.hour, model.minute, model.onOff.not())
+            renderView(newModel)
 
             // 온? 오프? 에 따라 작업을 처리한다.
+            if (newModel.onOff) {
+                // 온이라면 알람을 등록
+                val calendar = Calendar.getInstance().apply {
+                    set(Calendar.HOUR_OF_DAY, newModel.hour)
+                    set(Calendar.MINUTE, newModel.minute)
 
-            // 오프라면? 알람을 제거
+                    // 현재시각은 저녁 6시 알람설정은 오후4시로 할 경우 다음날 오후4시로 설정
+                    if (before(Calendar.getInstance())) {
+                        add(Calendar.DATE, 1)
+                    }
+                }
 
-            // 온이라면 알람을 등록
+                val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                val intent = Intent(this, AlarmReceiver::class.java)
+                val pendingIntent = PendingIntent.getBroadcast(
+                    this,
+                    ALARM_REQUEST_CODE,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
+                // 하루에 한 번씩 pendingIntent 가 실행.
+                alarmManager.setInexactRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.timeInMillis,
+                    AlarmManager.INTERVAL_DAY,
+                    pendingIntent
+                )
+
+            } else {
+                // 오프라면? 알람을 제거
+                cancelAlarm()
+            }
 
             // 데이터 저장.
+            // saveAlarmModel 통하여 해결.
+
         }
     }
 
@@ -95,13 +129,7 @@ class MainActivity : AppCompatActivity() {
                 renderView(model)
 
                 // 기존에 있던 알람을 삭제한다.
-                val pendingIntent = PendingIntent.getBroadcast(
-                    this,
-                    ALARM_REQUEST_CODE,
-                    Intent(this, AlarmReceiver::class.java),
-                    PendingIntent.FLAG_NO_CREATE
-                )
-                pendingIntent?.cancel()
+                cancelAlarm()
 
             }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false)
                 .show()
@@ -117,7 +145,7 @@ class MainActivity : AppCompatActivity() {
         val model = AlarmDisplayModel(
             hour = hour,
             minute = minute,
-            onOff = false
+            onOff = onOff
         )
 
         val sharedPreferences = getSharedPreferences("time", Context.MODE_PRIVATE)
@@ -150,16 +178,12 @@ class MainActivity : AppCompatActivity() {
             보정 보정 ( sharedPreferences 에서 알람이 켜져있다고 되어있는데, 알람이 등록이 되어있지 않았을 때,
             sP를 Off 로 바꿔줘야하고, 두 번째로는 등록은 되어있는데, 알람이 꺼져있다
         */
-
-
         val pendingIntent = PendingIntent.getBroadcast(
             this,
             ALARM_REQUEST_CODE,
             Intent(this, AlarmReceiver::class.java),
             PendingIntent.FLAG_NO_CREATE
         )
-
-
         // pendingIntent 가 null, 이면 알람이 등록이 되어있지 않다.
         // alarmModel onOff 값이 켜져있을 경우(true)
 
@@ -190,6 +214,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun cancelAlarm() {
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            ALARM_REQUEST_CODE,
+            Intent(this, AlarmReceiver::class.java),
+            PendingIntent.FLAG_NO_CREATE
+        )
+    }
 
     // key 값은 상수로 저장해 놓는게 좋다.
     companion object {
