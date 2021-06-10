@@ -80,7 +80,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initChangeAlarmTimeButton() {
+
         val changeAlarmButton = findViewById<Button>(R.id.changeAlarmTimeButton)
+
         changeAlarmButton.setOnClickListener {
             // 2.현재 시간을 일단 가져온다.
             val calendar = Calendar.getInstance()
@@ -93,6 +95,13 @@ class MainActivity : AppCompatActivity() {
                 renderView(model)
 
                 // 기존에 있던 알람을 삭제한다.
+                val pendingIntent = PendingIntent.getBroadcast(
+                    this,
+                    ALARM_REQUEST_CODE,
+                    Intent(this, AlarmReceiver::class.java),
+                    PendingIntent.FLAG_NO_CREATE
+                )
+                pendingIntent?.cancel()
 
             }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false)
                 .show()
@@ -142,34 +151,33 @@ class MainActivity : AppCompatActivity() {
             sP를 Off 로 바꿔줘야하고, 두 번째로는 등록은 되어있는데, 알람이 꺼져있다
         */
 
-        /*
+
         val pendingIntent = PendingIntent.getBroadcast(
             this,
             ALARM_REQUEST_CODE,
             Intent(this, AlarmReceiver::class.java),
             PendingIntent.FLAG_NO_CREATE
         )
-        */
 
 
         // pendingIntent 가 null, 이면 알람이 등록이 되어있지 않다.
         // alarmModel onOff 값이 켜져있을 경우(true)
 
-//        if ((pendingIntent == null) and alarmModel.onOff) {
-//            // 데이터 수정
-//            alarmModel.onOff = false
-//
-//
-//            // 알람이 등록되어있는 상태, alarmModel onOff 값이 꺼져있다.
-//        } else if ((pendingIntent != null) and alarmModel.onOff.not()) {
-//            // 알람을 취소함.
-//            pendingIntent.cancel()
-//
-//        }
+        if ((pendingIntent == null) and alarmModel.onOff) {
+            // 데이터 수정
+            alarmModel.onOff = false
+
+
+            // 알람이 등록되어있는 상태, alarmModel onOff 값이 꺼져있다.
+        } else if ((pendingIntent != null) and alarmModel.onOff.not()) {
+            // 알람을 취소함.
+            pendingIntent.cancel()
+
+        }
         return alarmModel
     }
 
-    private fun renderView(model : AlarmDisplayModel) {
+    private fun renderView(model: AlarmDisplayModel) {
         findViewById<TextView>(R.id.ampmTextView).apply {
             text = model.ampmText
         }
@@ -181,7 +189,6 @@ class MainActivity : AppCompatActivity() {
             tag = model
         }
     }
-
 
 
     // key 값은 상수로 저장해 놓는게 좋다.
