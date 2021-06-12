@@ -2,6 +2,11 @@ package re.sta.rt.aop_part3_chapter12
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import re.sta.rt.aop_part3_chapter12.api.BookService
+import re.sta.rt.aop_part3_chapter12.model.BestSellerDto
+import retrofit2.*
+import retrofit2.converter.gson.GsonConverterFactory
 
 
 /*
@@ -39,5 +44,46 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+        // retrofit 구현체 생성하기.
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://book.interpark.com")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val bookService = retrofit.create(BookService::class.java)
+        bookService.getBestSellerBooks("00DA1902E81A1BC00CA35EFADD9B305C188942FC163A7F0C7FC6D870569AEC46")
+            .enqueue(object : Callback<BestSellerDto> {
+                override fun onResponse(
+                    call: Call<BestSellerDto>,
+                    response: Response<BestSellerDto>
+                ) {
+                    // 성공 했을 시, 성공 처리
+
+                    // 성공 x
+                    if(response.isSuccessful.not()) {
+                        return
+                    }
+
+                    response.body()?.let {
+                        Log.d(TAG, it.toString())
+
+                        it.books.forEach { book ->
+                            Log.d(TAG,book.toString())
+
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<BestSellerDto>, t: Throwable) {
+                    // 실패 했을 때, 실패처리
+                }
+
+            })
     }
+    companion object {
+        private const val TAG = "MainActivity"
+    }
+
 }
