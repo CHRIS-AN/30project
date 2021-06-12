@@ -40,6 +40,19 @@ import retrofit2.converter.gson.GsonConverterFactory
  */
 
 
+/*
+    스크롤 뷰 vs 리사이클 뷰
+
+    차이는, 스크롤 뷰에 보이는 리스트의 모든 데이터에 대한 뷰가 다 그려지고
+    그것을 스크롤이 밑에있어도 그러져 있어, 앱이 죽거나 느려지기 때문에
+
+    리사이클 뷰를 사용하여
+    뷰를 올릴 시, 해당 보이려는 데이터만 불러와서 보여주게 끔한다.
+
+
+    * 리사이클 뷰를 가져와서 사용하려면, '레이아웃매니저' 와, '어댑터' 라는 것이 필요로 하다.
+ */
+
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +61,7 @@ class MainActivity : AppCompatActivity() {
 
         // retrofit 구현체 생성하기.
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://book.interpark.com")
+            .baseUrl("https://book.interpark.com")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
@@ -78,6 +91,8 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onFailure(call: Call<BestSellerDto>, t: Throwable) {
                     // 실패 했을 때, 실패처리
+
+                    Log.d(TAG, t.toString())
                 }
 
             })
