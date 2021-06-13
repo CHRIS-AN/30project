@@ -3,6 +3,8 @@ package re.sta.rt.aop_part3_chapter12
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.recyclerview.widget.LinearLayoutManager
+import re.sta.rt.aop_part3_chapter12.adapter.BookAdapter
 import re.sta.rt.aop_part3_chapter12.api.BookService
 import re.sta.rt.aop_part3_chapter12.databinding.ActivityMainBinding
 import re.sta.rt.aop_part3_chapter12.model.BestSellerDto
@@ -66,8 +68,11 @@ class MainActivity : AppCompatActivity() {
         // 리사이클 뷰를 사용하기 위하여, 뷰 바인딩을 가져와 보겠습니다.
         // activity_main.xml 뷰를 바인딩하기 하여.
         binding = ActivityMainBinding.inflate(layoutInflater)
+
         setContentView(binding.root)
 
+        // 리사이클 뷰를 초기화를 시켜준다.
+        initBookRecyclerView()
 
         // retrofit 구현체 생성하기.
         val retrofit = Retrofit.Builder()
@@ -107,6 +112,13 @@ class MainActivity : AppCompatActivity() {
 
             })
     }
+
+    fun initBookRecyclerView() {
+        val adapter = BookAdapter()
+        binding.bookRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.bookRecyclerView.adapter = adapter
+    }
+
     companion object {
         private const val TAG = "MainActivity"
     }
