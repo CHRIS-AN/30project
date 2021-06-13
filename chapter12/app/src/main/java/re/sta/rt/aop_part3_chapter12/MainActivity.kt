@@ -5,11 +5,14 @@ import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.room.Room
 import re.sta.rt.aop_part3_chapter12.adapter.BookAdapter
 import re.sta.rt.aop_part3_chapter12.api.BookService
 import re.sta.rt.aop_part3_chapter12.databinding.ActivityMainBinding
 import re.sta.rt.aop_part3_chapter12.model.BestSellerDto
+import re.sta.rt.aop_part3_chapter12.model.History
 import re.sta.rt.aop_part3_chapter12.model.SearchBookDto
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
@@ -66,6 +69,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter : BookAdapter
     private lateinit var bookService : BookService
 
+    private lateinit var db : AppDatabase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -75,6 +80,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         // 리사이클 뷰를 초기화를 시켜준다.
         initBookRecyclerView()
+
+        // AppDatabase 형식으로 저장된다.
+        db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java,
+            "BookSearchDB"
+        ).build()
+
 
         // retrofit 구현체 생성하기.
         val retrofit = Retrofit.Builder()
@@ -137,7 +150,7 @@ class MainActivity : AppCompatActivity() {
                     response: Response<SearchBookDto>
                 ) {
                     // 성공 했을 시, 성공 처리
-
+                    saveSearchKeyword(keyword)
                     // 성공 x
                     if(response.isSuccessful.not()) {
                         return
@@ -159,6 +172,21 @@ class MainActivity : AppCompatActivity() {
         adapter = BookAdapter()
         binding.bookRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.bookRecyclerView.adapter = adapter
+    }
+
+    private fun hideHistoryView() {
+        binding.historyRecyclerView.isVisible = false
+    }
+
+    private fun showHistoryView() {
+        // DB 에서 데이터를 가져온 다음에 그것을 어댑터에 넣어서 여준다.
+        binding.historyRecyclerView.isVisible = true
+    }
+    // 키워드 하나를 저장하는 fun
+    private fun saveSearchKeyword(keyword: String) {
+        Thread {
+            db.historyDao().insertHistory(History(null, keyword))
+        }.start()
     }
 
     companion object {
