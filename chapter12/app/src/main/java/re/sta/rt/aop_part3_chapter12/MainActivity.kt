@@ -10,6 +10,7 @@ import re.sta.rt.aop_part3_chapter12.adapter.BookAdapter
 import re.sta.rt.aop_part3_chapter12.api.BookService
 import re.sta.rt.aop_part3_chapter12.databinding.ActivityMainBinding
 import re.sta.rt.aop_part3_chapter12.model.BestSellerDto
+import re.sta.rt.aop_part3_chapter12.model.SearchBookDto
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -44,7 +45,6 @@ import retrofit2.converter.gson.GsonConverterFactory
     Square Open
  */
 
-
 /*
     스크롤 뷰 vs 리사이클 뷰
 
@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity() {
     // 다른 곳에서 뷰 바인딩을 사용하기 위하여,
     private lateinit var binding : ActivityMainBinding
     private lateinit var adapter : BookAdapter
+    private lateinit var bookService : BookService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,8 +82,9 @@ class MainActivity : AppCompatActivity() {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        val bookService = retrofit.create(BookService::class.java)
-        bookService.getBestSellerBooks("00DA1902E81A1BC00CA35EFADD9B305C188942FC163A7F0C7FC6D870569AEC46")
+        bookService = retrofit.create(BookService::class.java)
+
+        bookService.getBestSellerBooks(getString(R.string.interParkAPIkey))
             .enqueue(object : Callback<BestSellerDto> {
                 override fun onResponse(
                     call: Call<BestSellerDto>,
@@ -114,10 +116,10 @@ class MainActivity : AppCompatActivity() {
 
             })
 
-        // serach editor 에 key 가 눌린 event 주기
+         // serach editor 에 key 가 눌린 event 주기
         binding.searchEditText.setOnKeyListener { v, keyCode, event ->
             if(keyCode == KeyEvent.KEYCODE_ENTER && event.action == MotionEvent.ACTION_DOWN) {
-     //           search(binding.searchEditText.text.toString())
+                search(binding.searchEditText.text.toString())
                 return@setOnKeyListener true
             }
             return@setOnKeyListener false
@@ -126,7 +128,29 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun search() {
+    private fun search(keyword : String) {
+        bookService.getBooksByName(getString(R.string.interParkAPIkey), keyword)
+            .enqueue(object : Callback<SearchBookDto> {
+
+                override fun onResponse(
+                    call: Call<SearchBookDto>,
+                    response: Response<SearchBookDto>
+                ) {
+                    // 성공 했을 시, 성공 처리
+
+                    // 성공 x
+                    if(response.isSuccessful.not()) {
+                        return
+                    }
+                    adapter.submitList(response.body()?.books.orEmpty())
+                }
+
+                override fun onFailure(call: Call<SearchBookDto>, t: Throwable) {
+                    // 실패 했을 때, 실패처리
+                    Log.d(TAG, t.toString())
+                }
+
+            })
 
     }
 
