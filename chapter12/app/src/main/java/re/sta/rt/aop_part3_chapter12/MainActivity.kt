@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import re.sta.rt.aop_part3_chapter12.api.BookService
+import re.sta.rt.aop_part3_chapter12.databinding.ActivityMainBinding
 import re.sta.rt.aop_part3_chapter12.model.BestSellerDto
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
@@ -53,10 +54,19 @@ import retrofit2.converter.gson.GsonConverterFactory
     * 리사이클 뷰를 가져와서 사용하려면, '레이아웃매니저' 와, '어댑터' 라는 것이 필요로 하다.
  */
 
+
 class MainActivity : AppCompatActivity() {
+
+    // 다른 곳에서 뷰 바인딩을 사용하기 위하여,
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+
+        // 리사이클 뷰를 사용하기 위하여, 뷰 바인딩을 가져와 보겠습니다.
+        // activity_main.xml 뷰를 바인딩하기 하여.
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
 
         // retrofit 구현체 생성하기.

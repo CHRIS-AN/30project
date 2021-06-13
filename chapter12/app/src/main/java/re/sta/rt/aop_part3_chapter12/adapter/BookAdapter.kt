@@ -1,6 +1,8 @@
 package re.sta.rt.aop_part3_chapter12.adapter
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import re.sta.rt.aop_part3_chapter12.databinding.ItemBookBinding
@@ -21,12 +23,32 @@ class BookAdapter : ListAdapter<Book, BookAdapter.BookItemViewHolder>(diffUtil) 
         }
     }
     // 미리 만들어진 뷰 홀더가 없을 경우에, 새로 생성하는 함수
+    // * View 에도 context 가 있으니, View에서 context를 꺼낸다 -> (from() 인자)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookItemViewHolder {
-
+        return BookItemViewHolder(ItemBookBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     // 실제로 이 뷰 홀더가 뷰에 그려지게 됐을 때, 데이터를 바인딩하게 되는 함수
     override fun onBindViewHolder(holder: BookItemViewHolder, position: Int) {
         holder.bind(currentList[position])
+    }
+
+    // 리사이클 뷰가 실제로 뷰의 포지션이 변경이 되었을 때, 새로운 값을 할당할지 말지를 결정하는 기준이 있는데,
+    // 같은 아이템을 올라게 될 때에는, 이미 값이 할당 되었기 때문에 똑같은 값을 할당할 필요가없다.
+    // 그것을 결정이나? 판단을 해주는 것이 diffUtil 이다.
+    companion object {
+        val diffUtil = object : DiffUtil.ItemCallback<Book>() {
+
+            // old 와 new 가 같냐?
+            override fun areItemsTheSame(oldItem: Book, newItem: Book): Boolean {
+
+                return oldItem == newItem
+            }
+            // 안에있는 contents 가 같니 ?
+            override fun areContentsTheSame(oldItem: Book, newItem: Book): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+        }
     }
 }
