@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import re.sta.rt.aop_part3_chapter12.databinding.ItemBookBinding
 import re.sta.rt.aop_part3_chapter12.model.Book
 
@@ -20,6 +21,17 @@ class BookAdapter : ListAdapter<Book, BookAdapter.BookItemViewHolder>(diffUtil) 
         fun bind(bookModel :Book) {
             // 뷰를 바인드 시킨다.
             binding.titleTextView.text = bookModel.title
+            binding.descriptionTextView.text = bookModel.description // 데이터를 추가.
+
+
+            // 이미지를 인터넷에서 다운받아서 보여주는..(glide 라이브러리)
+            // 이렇게 하면,4줄만으로 url 서버에서 url 을 통하여 이미지를 가져올 수 있다.
+            // coverImageView 에 이미지가 추가가 된다.
+            Glide
+                .with(binding.coverImageView.context)
+                .load(bookModel.coverSmallUrl)
+                .into(binding.coverImageView)
+
         }
     }
     // 미리 만들어진 뷰 홀더가 없을 경우에, 새로 생성하는 함수

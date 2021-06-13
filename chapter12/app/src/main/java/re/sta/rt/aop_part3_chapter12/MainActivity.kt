@@ -3,6 +3,8 @@ package re.sta.rt.aop_part3_chapter12
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
+import android.view.MotionEvent
 import androidx.recyclerview.widget.LinearLayoutManager
 import re.sta.rt.aop_part3_chapter12.adapter.BookAdapter
 import re.sta.rt.aop_part3_chapter12.api.BookService
@@ -60,7 +62,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MainActivity : AppCompatActivity() {
 
     // 다른 곳에서 뷰 바인딩을 사용하기 위하여,
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding : ActivityMainBinding
+    private lateinit var adapter : BookAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,9 +71,7 @@ class MainActivity : AppCompatActivity() {
         // 리사이클 뷰를 사용하기 위하여, 뷰 바인딩을 가져와 보겠습니다.
         // activity_main.xml 뷰를 바인딩하기 하여.
         binding = ActivityMainBinding.inflate(layoutInflater)
-
         setContentView(binding.root)
-
         // 리사이클 뷰를 초기화를 시켜준다.
         initBookRecyclerView()
 
@@ -99,9 +100,10 @@ class MainActivity : AppCompatActivity() {
 
                         it.books.forEach { book ->
                             Log.d(TAG,book.toString())
-
                         }
+                        adapter.submitList(it.books)
                     }
+
                 }
 
                 override fun onFailure(call: Call<BestSellerDto>, t: Throwable) {
@@ -111,10 +113,26 @@ class MainActivity : AppCompatActivity() {
                 }
 
             })
+
+        // serach editor 에 key 가 눌린 event 주기
+        binding.searchEditText.setOnKeyListener { v, keyCode, event ->
+            if(keyCode == KeyEvent.KEYCODE_ENTER && event.action == MotionEvent.ACTION_DOWN) {
+     //           search(binding.searchEditText.text.toString())
+                return@setOnKeyListener true
+            }
+            return@setOnKeyListener false
+        }
+
     }
 
-    fun initBookRecyclerView() {
-        val adapter = BookAdapter()
+
+    private fun search() {
+
+    }
+
+
+    private fun initBookRecyclerView() {
+        adapter = BookAdapter()
         binding.bookRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.bookRecyclerView.adapter = adapter
     }
