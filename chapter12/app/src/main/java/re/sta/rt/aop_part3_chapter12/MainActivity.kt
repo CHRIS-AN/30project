@@ -180,8 +180,6 @@ class MainActivity : AppCompatActivity() {
             })
 
     }
-
-
     private fun initBookRecyclerView() {
         adapter = BookAdapter()
         binding.bookRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -208,7 +206,7 @@ class MainActivity : AppCompatActivity() {
         // DB 에서 데이터를 가져온 다음에 그것을 어댑터에 넣어서 여준다.
         Thread {
              val keywords =  db.historyDao().getAll().reversed()
- 
+
             // UI 작업
             runOnUiThread {
                 binding.historyRecyclerView.isVisible = true
