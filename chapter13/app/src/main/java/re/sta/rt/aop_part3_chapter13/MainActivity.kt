@@ -1,7 +1,9 @@
 package re.sta.rt.aop_part3_chapter13
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.google.firebase.auth.FirebaseAuth
 
 
 /*
@@ -24,13 +26,25 @@ import android.os.Bundle
  */
 class MainActivity : AppCompatActivity() {
 
-    
+    // 5. login_activity 연결
+    // auth 를 가져온다.
+    private val auth : FirebaseAuth = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+    }
 
+    // 앱이 실행이 되었을 떄?
+    override fun onStart() {
+        super.onStart()
+
+        // 로그인이 성공이 되었을 때, auth.currentUser 에 login 한 정보가 저장이 된다.
+        if(auth.currentUser == null) {
+            // 로그인 x -> login_activity 로 이동.
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
     }
 }
 
