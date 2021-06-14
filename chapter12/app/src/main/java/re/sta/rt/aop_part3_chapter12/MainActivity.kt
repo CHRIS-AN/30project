@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
 import re.sta.rt.aop_part3_chapter12.adapter.BookAdapter
+import re.sta.rt.aop_part3_chapter12.adapter.HistoryAdapter
 import re.sta.rt.aop_part3_chapter12.api.BookService
 import re.sta.rt.aop_part3_chapter12.databinding.ActivityMainBinding
 import re.sta.rt.aop_part3_chapter12.model.BestSellerDto
@@ -67,7 +68,10 @@ class MainActivity : AppCompatActivity() {
     // 다른 곳에서 뷰 바인딩을 사용하기 위하여,
     private lateinit var binding : ActivityMainBinding
     private lateinit var adapter : BookAdapter
+    private lateinit var historyAdapter: HistoryAdapter
+
     private lateinit var bookService : BookService
+
 
     private lateinit var db : AppDatabase
 
@@ -179,7 +183,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showHistoryView() {
+
         // DB 에서 데이터를 가져온 다음에 그것을 어댑터에 넣어서 여준다.
+        Thread {
+             val keywords =  db.historyDao().getAll().reversed()
+        }
+
+
         binding.historyRecyclerView.isVisible = true
     }
     // 키워드 하나를 저장하는 fun
