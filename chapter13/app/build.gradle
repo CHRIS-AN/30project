@@ -46,4 +46,8 @@ dependencies {
 
     // Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:28.1.0')
+
+    // Authentication Email
+    implementation 'com.google.firebase:firebase-auth-ktx'
+
 }
