@@ -26,7 +26,7 @@ class LoginActivity : AppCompatActivity(){
         // firebase 에서 auth 를 가져온다.
         auth = Firebase.auth    // getInstance 랑 동일하다가 생각.
 
-        val emailEditThread = findViewById<EditText>(R.id.emailEditText)
+        val emailEditText = findViewById<EditText>(R.id.emailEditText)
         val passwordEditText = findViewById<EditText>(R.id.passwordEditText)
 
         // login 버튼을 눌렀을 때, event
@@ -38,7 +38,7 @@ class LoginActivity : AppCompatActivity(){
         initEmailAndPasswordEditText()
     }
 
-
+    // 로그인
     private fun initLoginButton() {
         val loginButton = findViewById<Button>(R.id.loginButton)
         loginButton.setOnClickListener {
@@ -62,7 +62,7 @@ class LoginActivity : AppCompatActivity(){
 
         }
     }
-
+    // 회원가입
     private fun initSignUpButton() {
         val signUpButton = findViewById<Button>(R.id.signUpButton)
         signUpButton.setOnClickListener {
@@ -86,19 +86,19 @@ class LoginActivity : AppCompatActivity(){
     // 4. Text 에 변화가 있을 때, 둘 다 null? 이라면 login 과 password 를 비활성화.
     private fun initEmailAndPasswordEditText() {
         val emailEditText = findViewById<EditText>(R.id.emailEditText)
-        val passwordEditTxt = findViewById<EditText>(R.id.passwordEditText)
+        val passwordEditText = findViewById<EditText>(R.id.passwordEditText)
         val loginButton = findViewById<Button>(R.id.loginButton)
         val signUpButton = findViewById<Button>(R.id.signUpButton)
 
         // Text가 입력이 될 때마다, 이 Listener 로 event 가 내려오게된다.
         emailEditText.addTextChangedListener {
-            val enable = emailEditText.text.isNotEmpty() && passwordEditTxt.text.isNotEmpty()
+            val enable = emailEditText.text.isNotEmpty() && passwordEditText.text.isNotEmpty()
             loginButton.isEnabled = enable
             signUpButton.isEnabled = enable
         }
 
-        passwordEditTxt.addTextChangedListener {
-            val enable = emailEditText.text.isNotEmpty() && passwordEditTxt.text.isNotEmpty()
+        passwordEditText.addTextChangedListener {
+            val enable = emailEditText.text.isNotEmpty() && passwordEditText.text.isNotEmpty()
             loginButton.isEnabled = enable
             signUpButton.isEnabled = enable
 
