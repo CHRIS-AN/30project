@@ -44,6 +44,9 @@ class MainActivity : AppCompatActivity() {
         if(auth.currentUser == null) {
             // 로그인 x -> login_activity 로 이동.
             startActivity(Intent(this, LoginActivity::class.java))
+        }else {
+            // 7. 로그인 되어있다면, likeActivity 로!
+            startActivity(Intent(this, LikeActivity::class.java))
         }
     }
 }

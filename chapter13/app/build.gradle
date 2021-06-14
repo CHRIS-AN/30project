@@ -53,4 +53,6 @@ dependencies {
     // Facebook login
     implementation 'com.facebook.android:facebook-login:8.2.0'
 
+    // firebase Realtime Database
+    implementation 'com.google.firebase:firebase-database-ktx'
 }

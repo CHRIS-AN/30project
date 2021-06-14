@@ -16,6 +16,7 @@ import com.google.firebase.auth.FacebookAuthCredential
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 /*
@@ -68,7 +69,7 @@ class LoginActivity : AppCompatActivity(){
                 .addOnCompleteListener(this) { task ->
                     // 3. task 가 완료가 됐는지, 안됐는지, Firebase 가 검증 후, 이곳으로 return task 를 반환 시켜줄 것이다.
                     if(task.isSuccessful) {
-                        finish() // 성공하면, login_activity 를 종료.
+                        handleSuccessLogin() // 성공하면, login_activity 를 종료.
                     }else {
                         // 만약 실패했다면? toast message 창 띄우기
                         Toast.makeText(this, "로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해주세요.", Toast.LENGTH_SHORT).show()
@@ -139,7 +140,7 @@ class LoginActivity : AppCompatActivity(){
                 auth.signInWithCredential(credential)
                     .addOnCompleteListener(this@LoginActivity) { task ->
                         if(task.isSuccessful) {
-                            finish() //로그인성공
+                            handleSuccessLogin() //로그인성공
                         }else {
                              // 페이스북 로그인 실패
                         }
@@ -176,6 +177,27 @@ class LoginActivity : AppCompatActivity(){
         super.onActivityResult(requestCode, resultCode, data)
 
         callbackManager.onActivityResult(requestCode,resultCode, data)
+    }
+
+    // 7.
+    private fun handleSuccessLogin() {
+        // 한 번 더 예외처리
+        if(auth.currentUser == null) {
+            Toast.makeText(this, "로그인을 실패했습니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        // 성공했다면? userId를 가져오기
+        val userId = auth.currentUser?.uid.orEmpty()
+
+        // 7. firebaseRealtime Database 사용 ( gradle 에추가하기 )
+        // json 형식으로 저장이 된다.
+        // 로그인 할 시, userId 를 저장하는 코드
+        val currentUserDB = Firebase.database.reference.child("Users").child(userId) // 없으면 하나 생성? 있으면 있는 걸 가져옴
+        val user = mutableMapOf<String, Any>()
+        user["userId"] = userId
+        currentUserDB.updateChildren(user) // Users > user > userId
+
+        finish()
     }
 }
 
