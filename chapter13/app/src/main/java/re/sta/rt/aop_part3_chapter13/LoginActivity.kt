@@ -3,6 +3,7 @@ package re.sta.rt.aop_part3_chapter13
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -42,6 +43,20 @@ class LoginActivity : AppCompatActivity(){
             // 1. 사용자가 직접 친, email 과 password 를 가져온다.
             val email =  getInputEmail()
             val password = getInputPassword()
+
+            // 2. 가져온 이메일과 패스워드를 이용하여, 로그인 및 회원 가입 시키기
+            auth.signInWithEmailAndPassword(email, password) // 반환 값은 authResultTask
+                .addOnCompleteListener(this) { task ->
+                    // 3. task 가 완료가 됐는지, 안됐는지, Firebase 가 검증 후, 이곳으로 return task 를 반환 시켜줄 것이다.
+                    if(task.isSuccessful) {
+                        finish() // 성공하면, login_activity 를 종료.
+                    }else {
+                        // 만약 실패했다면? toast message 창 띄우기
+                        Toast.makeText(this, "로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해주세요.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+
         }
     }
 
@@ -52,6 +67,15 @@ class LoginActivity : AppCompatActivity(){
             // 1. 사용자가 직접 친, email 과 password 를 가져온다.
             val email =  getInputEmail()
             val password = getInputPassword()
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this) { task ->
+                    if(task.isSuccessful) {
+                        Toast.makeText(this, "회원가입에 성공했습니다.  로그인 버튼을 눌러 로그인해주세요", Toast.LENGTH_SHORT).show()
+                    }else {
+                        Toast.makeText(this, "이미 가입한 이메일이거나, 회원가입에 실패 했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
 
         }
     }
