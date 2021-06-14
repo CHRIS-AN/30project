@@ -12,7 +12,7 @@ import re.sta.rt.aop_part3_chapter12.model.Book
 
 // ListAdapter 를 상속 받는다.
 
-class BookAdapter : ListAdapter<Book, BookAdapter.BookItemViewHolder>(diffUtil) {
+class BookAdapter(private val itemClickListener : (Book) -> Unit) : ListAdapter<Book, BookAdapter.BookItemViewHolder>(diffUtil) {
 
 
     // ViewBinding 을 활성화를 시켜야한다.
@@ -22,6 +22,12 @@ class BookAdapter : ListAdapter<Book, BookAdapter.BookItemViewHolder>(diffUtil) 
             // 뷰를 바인드 시킨다.
             binding.titleTextView.text = bookModel.title
             binding.descriptionTextView.text = bookModel.description // 데이터를 추가.
+
+
+            //
+            binding.root.setOnClickListener() {
+                itemClickListener(bookModel)
+            }
 
 
             // 이미지를 인터넷에서 다운받아서 보여주는..(glide 라이브러리)

@@ -181,7 +181,12 @@ class MainActivity : AppCompatActivity() {
 
     }
     private fun initBookRecyclerView() {
-        adapter = BookAdapter()
+        adapter = BookAdapter(itemClickListener = {
+            val intent = Intent(this, DetailActivity::class.java)
+            // 직렬화를 해서 가져온다.
+            intent.putExtra("bookModel", it)
+            startActivity(intent)
+        })
         binding.bookRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.bookRecyclerView.adapter = adapter
     }
