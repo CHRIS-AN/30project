@@ -3,6 +3,7 @@ package re.sta.rt.aop_part3_chapter12
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
+import com.bumptech.glide.Glide
 import re.sta.rt.aop_part3_chapter12.databinding.ActivityDetailBinding
 import re.sta.rt.aop_part3_chapter12.model.Book
 
@@ -28,7 +29,13 @@ class DetailActivity : AppCompatActivity() {
 
         val model = intent.getParcelableExtra<Book>("bookModel")
 
-        
+
+        // 클릭 후, 초기화 시키기.
+        binding.titleTextView.text = model?.title.orEmpty()
+        binding.descriptionTextView.text = model?.description.orEmpty()
+        Glide.with(binding.coverImageView.context)
+            .load(model?.coverSmallUrl.orEmpty())
+            .into(binding.coverImageView)
 
     }
 }
