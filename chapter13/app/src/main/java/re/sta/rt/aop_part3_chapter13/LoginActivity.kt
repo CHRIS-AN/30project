@@ -1,11 +1,19 @@
 package re.sta.rt.aop_part3_chapter13
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginResult
+import com.facebook.login.widget.LoginButton
+import com.google.firebase.auth.FacebookAuthCredential
+import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -19,6 +27,10 @@ class LoginActivity : AppCompatActivity(){
 
     private lateinit var auth : FirebaseAuth
 
+    // 6. facebook login
+    private lateinit var callbackManager : CallbackManager
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -26,17 +38,21 @@ class LoginActivity : AppCompatActivity(){
         // firebase 에서 auth 를 가져온다.
         auth = Firebase.auth    // getInstance 랑 동일하다가 생각.
 
-        val emailEditText = findViewById<EditText>(R.id.emailEditText)
-        val passwordEditText = findViewById<EditText>(R.id.passwordEditText)
+
+
+        // 6. 정상적으로 초기화를 시킨다.
+        callbackManager = CallbackManager.Factory.create()
 
         // login 버튼을 눌렀을 때, event
         initLoginButton()
         // 회원가입 버튼을 눌렀을 때, event
         initSignUpButton()
-
         // 4. email null 값 잡기.
         initEmailAndPasswordEditText()
+        // 6. facebook login
+        initFacebookLoginButton()
     }
+
 
     // 로그인
     private fun initLoginButton() {
@@ -62,6 +78,9 @@ class LoginActivity : AppCompatActivity(){
 
         }
     }
+
+
+
     // 회원가입
     private fun initSignUpButton() {
         val signUpButton = findViewById<Button>(R.id.signUpButton)
@@ -105,6 +124,43 @@ class LoginActivity : AppCompatActivity(){
         }
     }
 
+    // 6. init facebook login
+    private fun initFacebookLoginButton() {
+        val facebookLoginButton = findViewById<LoginButton>(R.id.facebookLoginButton)
+
+        // 6. 이 퍼미션은 실제로 로그인 버튼을 눌렀을 때, 유저에게 받아올 정보, 어떤 권한을 요청을해서? 페이스북에서 어떤 권한을 가져오겠느냐?
+        facebookLoginButton.setPermissions("email", "public_profile")
+        facebookLoginButton.registerCallback(callbackManager, object:FacebookCallback<LoginResult> {
+            override fun onSuccess(result: LoginResult) {
+                // 로그인 성공적
+                // 로그인의 accessToken 을 가져와서 firebase 에 넘기는 과정.
+                val credential = FacebookAuthProvider.getCredential(result.accessToken.token)
+                // 페이스북에 로그인한 accessToken 을 넘겨주는 방식으로 로그인을 시도.
+                auth.signInWithCredential(credential)
+                    .addOnCompleteListener(this@LoginActivity) { task ->
+                        if(task.isSuccessful) {
+                            finish() //로그인성공
+                        }else {
+                             // 페이스북 로그인 실패
+                        }
+                    }
+            }
+
+            override fun onCancel() {
+                // 로그인 하다가 취소,
+            }
+
+            override fun onError(error: FacebookException?) {
+                // error
+                Toast.makeText(this@LoginActivity, "페이스북 로그인이 실패했습니다.", Toast.LENGTH_SHORT).show()
+            }
+
+        })
+
+
+
+    }
+
 
     private fun getInputEmail() : String {
         return findViewById<EditText>(R.id.emailEditText).text.toString()
@@ -112,6 +168,14 @@ class LoginActivity : AppCompatActivity(){
 
     private fun getInputPassword() : String {
         return findViewById<EditText>(R.id.passwordEditText).text.toString()
+    }
+
+
+    // 6. onActivityResult 에서 받아온다.
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        callbackManager.onActivityResult(requestCode,resultCode, data)
     }
 }
 
