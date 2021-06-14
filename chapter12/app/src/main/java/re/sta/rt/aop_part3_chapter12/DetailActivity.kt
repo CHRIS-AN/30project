@@ -6,6 +6,7 @@ import androidx.room.Room
 import com.bumptech.glide.Glide
 import re.sta.rt.aop_part3_chapter12.databinding.ActivityDetailBinding
 import re.sta.rt.aop_part3_chapter12.model.Book
+import re.sta.rt.aop_part3_chapter12.model.Review
 
 class DetailActivity : AppCompatActivity() {
 
@@ -37,5 +38,20 @@ class DetailActivity : AppCompatActivity() {
             .load(model?.coverSmallUrl.orEmpty())
             .into(binding.coverImageView)
 
+
+
+
+
+        // 저장하기
+        binding.saveButton.setOnClickListener {
+            Thread {
+                db.reviewDao().saveReview(
+                    Review(
+                        model?.id?.toInt() ?: 0,
+                        binding.reviewEditText.text.toString())
+
+                )
+            }.start()
+        }
     }
 }

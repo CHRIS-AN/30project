@@ -68,6 +68,7 @@
 
 
             <Button
+                android:text="저장하기"
                 android:id="@+id/saveButton"
                 android:layout_width="0dp"
                 app:layout_constraintStart_toStartOf="parent"
