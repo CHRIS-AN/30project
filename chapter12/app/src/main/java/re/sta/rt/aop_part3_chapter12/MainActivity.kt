@@ -84,6 +84,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         // 리사이클 뷰를 초기화를 시켜준다.
         initBookRecyclerView()
+        initHistoryRecyclerView()
+
+
 
         // AppDatabase 형식으로 저장된다.
         db = Room.databaseBuilder(
@@ -145,6 +148,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+
     private fun search(keyword : String) {
         bookService.getBooksByName(getString(R.string.interParkAPIkey), keyword)
             .enqueue(object : Callback<SearchBookDto> {
@@ -153,6 +157,9 @@ class MainActivity : AppCompatActivity() {
                     call: Call<SearchBookDto>,
                     response: Response<SearchBookDto>
                 ) {
+                    // 성공했을 때, 한번 지워주고?
+                    hideHistoryView()
+
                     // 성공 했을 시, 성공 처리
                     saveSearchKeyword(keyword)
                     // 성공 x
@@ -164,6 +171,9 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onFailure(call: Call<SearchBookDto>, t: Throwable) {
                     // 실패 했을 때, 실패처리
+
+                    // search 가 실패했을 때도 지워주기
+                    hideHistoryView()
                     Log.d(TAG, t.toString())
                 }
 
@@ -178,15 +188,32 @@ class MainActivity : AppCompatActivity() {
         binding.bookRecyclerView.adapter = adapter
     }
 
+    private fun initHistoryRecyclerView() {
+        historyAdapter = HistoryAdapter(historyDeleteClickedListener = {
+            deleteSearchKeyword(it)
+        })
+        binding.historyRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.historyRecyclerView.adapter = historyAdapter
+
+
+    }
+
+
+
     private fun hideHistoryView() {
         binding.historyRecyclerView.isVisible = false
     }
 
     private fun showHistoryView() {
-
         // DB 에서 데이터를 가져온 다음에 그것을 어댑터에 넣어서 여준다.
         Thread {
              val keywords =  db.historyDao().getAll().reversed()
+
+            // UI 작업
+            runOnUiThread {
+                binding.historyRecyclerView.isVisible = true
+                historyAdapter.submitList(keywords.orEmpty()) // null 처리 잡기
+            }
         }
 
 
@@ -197,6 +224,16 @@ class MainActivity : AppCompatActivity() {
         Thread {
             db.historyDao().insertHistory(History(null, keyword))
         }.start()
+    }
+
+    // 쓰레드를 열어서 delete 시켜주기
+    private fun deleteSearchKeyword(keyword: String) {
+        Thread {
+            db.historyDao().delete(keyword)
+            // delete를 한 뒤에는 view 를 갱신을 해주어야한다.
+            // todo View 갱신
+            showHistoryView()
+        }
     }
 
     companion object {
