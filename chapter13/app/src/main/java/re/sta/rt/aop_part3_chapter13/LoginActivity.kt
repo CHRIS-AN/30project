@@ -103,7 +103,6 @@ class LoginActivity : AppCompatActivity(){
             signUpButton.isEnabled = enable
 
         }
-
     }
 
 
