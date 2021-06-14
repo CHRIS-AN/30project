@@ -5,6 +5,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -32,8 +33,10 @@ class LoginActivity : AppCompatActivity(){
         initLoginButton()
         // 회원가입 버튼을 눌렀을 때, event
         initSignUpButton()
-    }
 
+        // 4. email null 값 잡기.
+        initEmailAndPasswordEditText()
+    }
 
 
     private fun initLoginButton() {
@@ -79,6 +82,30 @@ class LoginActivity : AppCompatActivity(){
 
         }
     }
+
+    // 4. Text 에 변화가 있을 때, 둘 다 null? 이라면 login 과 password 를 비활성화.
+    private fun initEmailAndPasswordEditText() {
+        val emailEditText = findViewById<EditText>(R.id.emailEditText)
+        val passwordEditTxt = findViewById<EditText>(R.id.passwordEditText)
+        val loginButton = findViewById<Button>(R.id.loginButton)
+        val signUpButton = findViewById<Button>(R.id.signUpButton)
+
+        // Text가 입력이 될 때마다, 이 Listener 로 event 가 내려오게된다.
+        emailEditText.addTextChangedListener {
+            val enable = emailEditText.text.isNotEmpty() && passwordEditTxt.text.isNotEmpty()
+            loginButton.isEnabled = enable
+            signUpButton.isEnabled = enable
+        }
+
+        passwordEditTxt.addTextChangedListener {
+            val enable = emailEditText.text.isNotEmpty() && passwordEditTxt.text.isNotEmpty()
+            loginButton.isEnabled = enable
+            signUpButton.isEnabled = enable
+
+        }
+
+    }
+
 
     private fun getInputEmail() : String {
         return findViewById<EditText>(R.id.emailEditText).text.toString()
