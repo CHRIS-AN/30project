@@ -39,7 +39,14 @@ class DetailActivity : AppCompatActivity() {
             .into(binding.coverImageView)
 
 
-
+        // view 에 들어왔을 때, Thread 를 열어서 review 를 가져와야한다.
+        Thread {
+            val review = db.reviewDao().getOneReview(model?.id?.toInt() ?: 0)
+            runOnUiThread {
+                // db에서 review를 가져와서 있으면 넣어주고 없으면 빈값을 넣어준다.
+                binding.reviewEditText.setText(review?.review.orEmpty())
+            }
+        }.start()
 
 
         // 저장하기
