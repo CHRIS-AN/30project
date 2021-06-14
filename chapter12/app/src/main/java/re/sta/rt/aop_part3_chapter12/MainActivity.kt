@@ -136,7 +136,7 @@ class MainActivity : AppCompatActivity() {
 
             })
 
-         // serach editor 에 key 가 눌린 event 주기
+         // serach editor 에 key 가 눌린 event 주기 ( editText가 초기화되는 부분)
         binding.searchEditText.setOnKeyListener { v, keyCode, event ->
             if(keyCode == KeyEvent.KEYCODE_ENTER && event.action == MotionEvent.ACTION_DOWN) {
                 search(binding.searchEditText.text.toString())
@@ -208,17 +208,39 @@ class MainActivity : AppCompatActivity() {
         // DB 에서 데이터를 가져온 다음에 그것을 어댑터에 넣어서 여준다.
         Thread {
              val keywords =  db.historyDao().getAll().reversed()
-
+ 
             // UI 작업
             runOnUiThread {
                 binding.historyRecyclerView.isVisible = true
                 historyAdapter.submitList(keywords.orEmpty()) // null 처리 잡기
             }
-        }
+        }.start()
 
 
         binding.historyRecyclerView.isVisible = true
     }
+
+
+    private fun initSearchEditText () {
+        // editText가 초기화되는 부분
+        binding.searchEditText.setOnKeyListener { v, keyCode, event ->
+            if(keyCode == KeyEvent.KEYCODE_ENTER && event.action == MotionEvent.ACTION_DOWN) {
+                search(binding.searchEditText.text.toString())
+                return@setOnKeyListener true
+            }
+            return@setOnKeyListener false
+        }
+
+        binding.searchEditText.setOnTouchListener { v, event ->
+            if(event.action == MotionEvent.ACTION_DOWN) {
+                showHistoryView()
+                //return@setOnTouchListener true  : 이 곳을 true로 주게 되면 action_down에 대해서 실제로 터치가 되는 과정이 실행이 되지 않기 때문에 true로 리턴을하지 않는다
+            }
+            return@setOnTouchListener false
+        }
+    }
+
+
     // 키워드 하나를 저장하는 fun
     private fun saveSearchKeyword(keyword: String) {
         Thread {
@@ -233,7 +255,7 @@ class MainActivity : AppCompatActivity() {
             // delete를 한 뒤에는 view 를 갱신을 해주어야한다.
             // todo View 갱신
             showHistoryView()
-        }
+        }.start()
     }
 
     companion object {
