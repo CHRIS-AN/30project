@@ -26,6 +26,10 @@ class LikeActivity : AppCompatActivity(), CardStackListener {
     private val adapter = CardItemAdapter()
     private val cardItems = mutableListOf<CardItem>()
 
+    // 9. like, dislike 전역변수로 빼기
+    private val manager by lazy {
+        CardStackLayoutManager(this, this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +61,7 @@ class LikeActivity : AppCompatActivity(), CardStackListener {
     private fun initCardStackView() {
         val stackView = findViewById<CardStackView>(R.id.cardStackView)
 
-        stackView.layoutManager = CardStackLayoutManager(this, this)
+        stackView.layoutManager = manager
         stackView.adapter = adapter
     }
 
@@ -158,10 +162,50 @@ class LikeActivity : AppCompatActivity(), CardStackListener {
         // *
         return auth.currentUser?.uid.orEmpty()
     }
+    // 9. swipe 처리
+    private fun like() {
+        // like 를 했을 때, db userId 를 알아야한다.
+        // stack 에 제일 위에있는 값
+        val card = cardItems[manager.topPosition - 1]
+        cardItems.removeFirst() // 카드를 넘기면 지우기
+
+        // 상대방의 like, dislike를 저장하기
+        userDB.child(card.userId)
+            .child("likeBy")
+            .child("like")
+            .child(getCurrentUserID())
+            .setValue(true)
+
+
+        // todo 매칭이된 시점을 봐야함.
+        Toast.makeText(this, "${card.name}님을 Like 하였습니다.", Toast.LENGTH_SHORT).show()
+
+    }
+
+    // 9. swipe 처리
+    private fun dislike() {
+        val card = cardItems[manager.topPosition - 1]
+        cardItems.removeFirst() // 카드를 넘기면 지우기
+
+        // 상대방의 like, dislike를 저장하기
+        userDB.child(card.userId)
+            .child("likeBy")
+            .child("dislike")
+            .child(getCurrentUserID())
+            .setValue(true)
+
+        Toast.makeText(this, "${card.name}님을 disLike 하였습니다.", Toast.LENGTH_SHORT).show()
+    }
+
 
     override fun onCardDragging(direction: Direction?, ratio: Float) {}
     override fun onCardSwiped(direction: Direction?) {
-
+        // 9. 카드뷰 swipe 처리.
+        when(direction) {
+            Direction.Right -> like()
+                Direction.Left -> dislike()
+            else -> {}
+        }
     }
     override fun onCardRewound() {}
     override fun onCardCanceled() {}
