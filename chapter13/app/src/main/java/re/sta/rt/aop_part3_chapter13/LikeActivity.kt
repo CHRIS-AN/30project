@@ -7,10 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager
@@ -50,6 +47,7 @@ class LikeActivity : AppCompatActivity(), CardStackListener {
                 }
 
                 // todo 유저 정보를 갱신해라.
+                getUnSelectedUsers()
             }
             override fun onCancelled(error: DatabaseError) {}
         })
@@ -61,10 +59,59 @@ class LikeActivity : AppCompatActivity(), CardStackListener {
 
         stackView.layoutManager = CardStackLayoutManager(this, this)
         stackView.adapter = adapter
-
-
-
     }
+
+    private fun getUnSelectedUsers() {
+        userDB.addChildEventListener(object : ChildEventListener {
+
+            // 초기의 데이터를 불러오는 과정, 새로운 유저가 생겼을 때
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+
+                // 나와 동일한 userId를 가진 card 는 보여줄 필요 없으며,
+                // 내가 like 한 유저에게 like 를 dislike 라면? dislike 를 저장하는데, 내 userId가 상대방에게 없다면?
+                if(snapshot.child("userId").value != getCurrentUserID()
+                    && snapshot.child("likeBy").child("like").hasChild(getCurrentUserID()).not()
+                    && snapshot.child("likeBy").child("dislike").hasChild(getCurrentUserID()).not()) {
+
+                    // 현재 보고있는 card 는 새로보는 userId
+                    val userId = snapshot.child("userId").value.toString()
+                    var name = "undecided"
+                    if(snapshot.child("name").value != null) {
+                        name = snapshot.child("name").value.toString()
+                    }
+                    // 해당 userId 값과 name 을 저장한다
+                    cardItems.add(CardItem(userId, name))
+                    adapter.submitList(cardItems)
+
+                    // recyclerView 를 다시 갱신해라
+                    adapter.notifyDataSetChanged()
+                }
+            }
+
+            // 이름이 변경되었을 경우? 또는 다른 유저가 다른유저를 like 했을 때,
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+
+                // 상대방 카드가 변경될 시, (이름)
+                cardItems.find { it.userId == snapshot.key }?.let {
+                    // name update 시키기 let(확장함수사용)
+                    it.name = snapshot.child("name").value.toString()
+                }
+
+                // 만약에 수정이되었다면? 카드 items를 갱신해주기
+                adapter.submitList(cardItems)
+
+                // 실제로 card가 최신버전으로 갱신
+                adapter.notifyDataSetChanged()
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {}
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onCancelled(error: DatabaseError) {}
+
+        })
+    }
+
+
 
     // Alert Dialog
     private fun showNameInputPopup() {
@@ -95,6 +142,10 @@ class LikeActivity : AppCompatActivity(), CardStackListener {
         user["userId"] = userId
         user["name"] = name
         currentUserDB.updateChildren(user) // Users > user > userId
+
+
+        getUnSelectedUsers()
+
 
     }
     private fun getCurrentUserID () : String {
