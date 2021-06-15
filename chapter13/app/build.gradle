@@ -55,4 +55,9 @@ dependencies {
 
     // firebase Realtime Database
     implementation 'com.google.firebase:firebase-database-ktx'
+
+    // swipe Android stack CardView (깃오픈소스)
+    implementation "com.yuyakaido.android:card-stack-view:2.3.4"
+
+
 }
