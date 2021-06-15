@@ -47,6 +47,9 @@ class MainActivity : AppCompatActivity() {
         }else {
             // 7. 로그인 되어있다면, likeActivity 로!
             startActivity(Intent(this, LikeActivity::class.java))
+
+            // likeActivity 가 열리면 MainAcitivy는 꺼지는걸로
+            finish()
         }
     }
 }

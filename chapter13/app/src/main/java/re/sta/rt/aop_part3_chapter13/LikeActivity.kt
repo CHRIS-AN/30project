@@ -1,7 +1,9 @@
 package re.sta.rt.aop_part3_chapter13
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -56,7 +58,28 @@ class LikeActivity : AppCompatActivity(), CardStackListener {
             override fun onCancelled(error: DatabaseError) {}
         })
         initCardStackView()
+        initSignOutButton()
+        initMatchedListButton()
     }
+    // 10
+    private fun initMatchedListButton() {
+        val matchedListButton = findViewById<Button>(R.id.matchListButton)
+        matchedListButton.setOnClickListener {
+            // 다시 로그인하는 곳으로 넘어가기
+            startActivity(Intent(this, MatchedUserActivity::class.java))
+        }
+    }
+    // 10
+    private fun initSignOutButton() {
+        val signOutButton = findViewById<Button>(R.id.signUpButton)
+        signOutButton.setOnClickListener {
+            auth.signOut()
+            // 다시 로그인하는 곳으로 넘어가기
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
+    }
+
 
     private fun initCardStackView() {
         val stackView = findViewById<CardStackView>(R.id.cardStackView)
@@ -149,8 +172,6 @@ class LikeActivity : AppCompatActivity(), CardStackListener {
 
 
         getUnSelectedUsers()
-
-
     }
     private fun getCurrentUserID () : String {
 
@@ -162,6 +183,8 @@ class LikeActivity : AppCompatActivity(), CardStackListener {
         // *
         return auth.currentUser?.uid.orEmpty()
     }
+
+
     // 9. swipe 처리
     private fun like() {
         // like 를 했을 때, db userId 를 알아야한다.
@@ -194,7 +217,49 @@ class LikeActivity : AppCompatActivity(), CardStackListener {
             .child(getCurrentUserID())
             .setValue(true)
 
+
+        // 10. 내가 먼저 like 하고, 그 상대방도 나를 like 할 때?
+        saveMatchIfOtherUserLikedMe(card.userId)
+
         Toast.makeText(this, "${card.name}님을 disLike 하였습니다.", Toast.LENGTH_SHORT).show()
+    }
+
+    // 10.
+    private fun saveMatchIfOtherUserLikedMe(otherUserId: String) {
+
+        val otherUserDB = userDB.child(getCurrentUserID()).child("likeBy").child("like").child(otherUserId)
+
+
+        // 10. event 값을 확인하기
+        otherUserDB.addListenerForSingleValueEvent(object : ValueEventListener {
+
+            // 데이터가 있을 때? 이곳으로 옴
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                // true 면 상대방이 나를 like 한 것.
+                if(snapshot.value == true) {
+                    // 따라서 matching 됨.
+                    userDB.child(getCurrentUserID())
+                        .child("likeBy")
+                        .child("match")
+                        .child(otherUserId)
+                        .setValue(true)
+
+                    userDB.child(otherUserId)
+                        .child("likeBy")
+                        .child("match")
+                        .child(getCurrentUserID())
+                        .setValue(true)
+
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {}
+
+        })
+
+
+
+
     }
 
 
