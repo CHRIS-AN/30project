@@ -97,8 +97,8 @@ class LikeActivity : AppCompatActivity(), CardStackListener {
                 // 나와 동일한 userId를 가진 card 는 보여줄 필요 없으며,
                 // 내가 like 한 유저에게 like 를 dislike 라면? dislike 를 저장하는데, 내 userId가 상대방에게 없다면?
                 if(snapshot.child("userId").value != getCurrentUserID()
-                    && snapshot.child("likeBy").child("like").hasChild(getCurrentUserID()).not()
-                    && snapshot.child("likeBy").child("dislike").hasChild(getCurrentUserID()).not()) {
+                    && snapshot.child("likedBy").child("like").hasChild(getCurrentUserID()).not()
+                    && snapshot.child("likedBy").child("dislike").hasChild(getCurrentUserID()).not()) {
 
                     // 현재 보고있는 card 는 새로보는 userId
                     val userId = snapshot.child("userId").value.toString()
@@ -227,7 +227,7 @@ class LikeActivity : AppCompatActivity(), CardStackListener {
     // 10.
     private fun saveMatchIfOtherUserLikedMe(otherUserId: String) {
 
-        val otherUserDB = userDB.child(getCurrentUserID()).child("likeBy").child("like").child(otherUserId)
+        val otherUserDB = userDB.child(getCurrentUserID()).child("likedBy").child("like").child(otherUserId)
 
 
         // 10. event 값을 확인하기
@@ -240,13 +240,13 @@ class LikeActivity : AppCompatActivity(), CardStackListener {
                 if(snapshot.value == true) {
                     // 따라서 matching 됨.
                     userDB.child(getCurrentUserID())
-                        .child("likeBy")
+                        .child("likedBy")
                         .child("match")
                         .child(otherUserId)
                         .setValue(true)
 
                     userDB.child(otherUserId)
-                        .child("likeBy")
+                        .child("likedBy")
                         .child("match")
                         .child(getCurrentUserID())
                         .setValue(true)
