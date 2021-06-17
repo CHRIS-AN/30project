@@ -5,6 +5,7 @@ import android.os.Bundle
 
 
 /*
+    주요기능
     RecyclerView
     View Binding
     Fragment
@@ -15,9 +16,15 @@ import android.os.Bundle
  */
 
 
+// TEST
 class MainActivity : AppCompatActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+
     }
 }
