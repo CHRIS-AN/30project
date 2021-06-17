@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 
         // 처음에는 아무것도 attach 되어있지 않기 때문에? 초기 설정
         replaceFragment(homeFragment)
-        
+
         bottomNavigationView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.home -> replaceFragment(homeFragment)
