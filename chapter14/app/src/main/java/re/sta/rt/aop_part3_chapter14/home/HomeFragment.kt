@@ -1,5 +1,6 @@
 package re.sta.rt.aop_part3_chapter14.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -68,6 +69,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         // 리사이클 뷰 연결시키기
         fragmentHomeBinding.articleRecyclerView.layoutManager = LinearLayoutManager(context) // getContext 를 하여, Fragment 에 없는 context를 가져온다고 생각
         fragmentHomeBinding.articleRecyclerView.adapter = articleAdapter
+
+
+        fragmentHomeBinding.addFloatingButton.setOnClickListener {
+            val intent =  Intent(requireContext(), AddArticleActivity::class.java)
+            startActivity(intent)
+        }
 
 
         // db에 event 등록
