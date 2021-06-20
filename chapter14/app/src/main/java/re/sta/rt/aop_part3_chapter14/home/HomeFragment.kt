@@ -17,6 +17,8 @@ import re.sta.rt.aop_part3_chapter14.DBKey.Companion.DB_ARTICLES
 import re.sta.rt.aop_part3_chapter14.R
 import re.sta.rt.aop_part3_chapter14.databinding.FragmentHomeBinding
 
+
+// HomeFragment
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private lateinit var articleAdapter : ArticleAdapter
