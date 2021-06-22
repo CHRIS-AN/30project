@@ -14,13 +14,19 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import re.sta.rt.aop_part3_chapter14.R
+
 
 class AddArticleActivity : AppCompatActivity() {
 
-
     private var selectedUri : Uri? = null
-    
+    private val auth : FirebaseAuth by lazy {
+        Firebase.auth
+    }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
