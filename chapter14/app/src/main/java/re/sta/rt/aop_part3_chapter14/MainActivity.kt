@@ -12,12 +12,16 @@ import re.sta.rt.aop_part3_chapter14.myPage.MyPageFragment
 /*
     주요기능
     RecyclerView
+
     View Binding
+
     Fragment
+
     BottomNavigationView
-    Firebase Storage
-    Firebase Realtime Database
-    Firebase Authentication
+    Firebase Storage (인증키 필요)
+    Firebase Realtime Database (인증키 필요)
+    Firebase Authentication 
+
  */
 
 class MainActivity : AppCompatActivity() {
