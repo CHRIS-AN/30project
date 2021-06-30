@@ -23,7 +23,7 @@ import android.os.Bundle
     숙소버튼을 눌러 현재 보고 있는 숙소를 앱 외부로 공유할 수 있음.
  */
 
-// TEST
+
 
 class MainActivity : AppCompatActivity() {
 
